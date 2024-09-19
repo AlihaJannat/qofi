@@ -1,0 +1,107 @@
+@font-face {
+    font-family: "shrimp";
+    src: url("./../fonts/SHRIMP.ttf");
+}
+
+.local-shrimp {
+    font-family: "shrimp";
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* background-color: #ffe6e6; */
+}
+.header, .footer {
+    width: 100%;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header .back-to-shopping {
+    color: #333;
+    text-decoration: none;
+}
+
+.header .nav {
+    background-color: #222;
+    padding: 0.5rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.header nav a {
+    margin: 0 10px;
+    color: #DDDDDD;
+    text-decoration: none;
+}
+
+.skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    animation: pulse 1.5s infinite;
+}
+
+.custom-checkbox {
+    width: 1.3em;
+    height: 1.3em;
+    background-color: white;
+    border-radius: 5px;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-checkbox:checked {
+    background-color: #BA5053;
+}
+
+.custom-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 55%;
+    left: 65%;
+    transform: translate(-50%, -50%);
+    width: 0.5em; /* Adjust the width of the tick mark */
+    height: 0.25em; /* Adjust the height of the tick mark */
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    transform-origin: bottom left;
+    transition: transform 0.1s ease;
+}
+
+.custom-checkbox:checked::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.swatch.active {
+    transform: scale(1.3);
+    border: 2px solid rgb(65, 65, 65);
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

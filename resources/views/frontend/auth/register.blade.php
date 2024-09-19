@@ -1,0 +1,10 @@
+@extends('layout.frontapp')
+@section('title')
+    Registration
+@endsection
+@section('content')
+    @livewire('auth.register')
+@endsection
+@section('script')
+    @include('frontend.auth.passwordToggle')
+@endsection

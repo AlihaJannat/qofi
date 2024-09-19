@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('permission_role', function (Blueprint $table) {
+            $table->foreignId('sw_role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sw_permission_id')->constrained()->onDelete('cascade');
+
+            $table->primary(['sw_role_id', 'sw_permission_id']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('permission_role');
+    }
+};

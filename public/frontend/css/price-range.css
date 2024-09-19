@@ -1,0 +1,118 @@
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    pointer-events: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 0;
+    background: url('../images/icons/range-dot.svg') no-repeat center;
+    /* border: 2px solid #FF8080; */
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -8px;
+    pointer-events: auto;
+    position: relative;
+}
+
+/* Pink square inside the thumb */
+input[type="range"]::-webkit-slider-thumb::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 16px;
+    height: 16px;
+    background-color: #FF8080;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: transparent;
+    border-radius: 4px;
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 0;
+    background: #FFF;
+    border: 2px solid #FF8080;
+    cursor: pointer;
+    pointer-events: auto;
+    position: relative;
+}
+
+/* Pink square inside the thumb for Firefox */
+input[type="range"]::-moz-range-thumb::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 16px;
+    height: 16px;
+    background-color: #FF8080;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+input[type="range"]::-ms-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 0;
+    background: #FFF;
+    border: 2px solid #FF8080;
+    cursor: pointer;
+    margin-top: 0px;
+    pointer-events: auto;
+    position: relative;
+}
+
+/* Pink square inside the thumb for IE/Edge */
+input[type="range"]::-ms-thumb::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 16px;
+    height: 16px;
+    background-color: #FF8080;
+}
+
+.range-min {
+    z-index: 20;
+}
+
+.range-max {
+    z-index: 10;
+}
+
+#rangeTrack, #rangeTrackHeight {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    height: 5px;
+    border-radius: 4px;
+    background: #FF8080;
+}
