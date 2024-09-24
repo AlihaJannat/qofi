@@ -70,16 +70,33 @@ $superAdmin = auth('admin')->user()->id == 1;
         @endif
 
         @php
-        $bannerView = auth('admin')->user()->roleRel?->permissions->contains('name', 'banner_view') || $superAdmin;
+            $bannerView = auth('admin')->user()->roleRel?->permissions->contains('name', 'banner_view') || $superAdmin;
         @endphp
+
         @if ($bannerView)
-        <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.') ? 'active' : '' }}">
-            <a href="{{ route('admin.banner.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-image"></i>
-                <div data-i18n="Banners">Banners</div>
-            </a>
-        </li>
+            <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.') ? 'active' : '' }}">
+                <a href="javascript:void(0);"class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-home"></i>
+                    <div data-i18n="Banners">Banners</div>
+                </a>
+
+                <!-- Submenu for Banners -->
+                <ul class="menu-sub">
+                    <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.banner.index') }}" class="menu-link">
+                            <div data-i18n="Banners">Banners</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.main-banner.') ? 'active' : '' }}">
+                        <a href="{{ route('admin.main-banner.index') }}" class="menu-link">
+                            <div data-i18n="Main Banners">Main Banners</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
         @endif
+
 
         @php
         $categoryView =
