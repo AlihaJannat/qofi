@@ -82,6 +82,17 @@ Route::group(['prefix' => 'main-banner', 'as' => 'main-banner.'], function () {
     Route::post('/image/change', [Admin\MainBannerController::class, 'imageChange'])->name('img.change');
 });
 
+//filter
+Route::group(['prefix' => 'filter', 'as' => 'filter.'], function () {
+    Route::get('/', [Admin\FilterController::class, 'index'])->name('index');
+    Route::get('yajra', [Admin\YajraController::class, 'filterData'])->name('yajra');
+    Route::match(['get', 'post'], '/new', [Admin\FilterController::class, 'new'])->name('new');
+    Route::match(['get', 'post'], '/edit/{id}', [Admin\FilterController::class, 'edit'])->name('edit');
+    Route::delete('delete', [Admin\FilterController::class, 'delete'])->name('delete');
+    Route::get('status', [Admin\FilterController::class, 'changeStatus'])->name('status');
+    Route::post('/image/change', [Admin\FilterController::class, 'imageChange'])->name('img.change');
+});
+
 Route::prefix('shop')->as('shop.')->group(function () {
     Route::get('/', [Admin\ShopController::class, 'index'])->name('index')->middleware('permission:shop_view');
     Route::match(['get', 'post'], 'new', [Admin\ShopController::class, 'new'])->name('new')->middleware('permission:shop_create');

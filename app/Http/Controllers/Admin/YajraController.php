@@ -8,6 +8,7 @@ use App\Models\SwBanner;
 use App\Models\SwCategory;
 use App\Models\SwColor;
 use App\Models\SwCoupon;
+use App\Models\SwFilter;
 use App\Models\SwMainBanner;
 use App\Models\SwOrder;
 use App\Models\SwProduct;
@@ -326,6 +327,63 @@ class YajraController extends Controller
                 ->addColumn('action', function ($banner) {
                     $deleteHtml = $banner->type == 'simple' ? "<a href='javascript:;' onclick='deleteBanner(this,  $banner->id )' class='dropdown-item text-danger delete-record'>Delete</a>" : '';
                     $route = route('admin.main-banner.edit', [$banner->id]);
+                    $html = "<div class='d-inline-block'>
+                        <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
+                            <i class='bx bx-dots-vertical-rounded'></i>
+                        </a>
+                        <div class='dropdown-menu dropdown-menu-end m-0'>
+                            <a href='$route' class='dropdown-item'>View</a>
+                            <div class='dropdown-divider'></div>
+                            $deleteHtml
+                        </div>
+                    </div>";
+                    return $html;
+                })
+                ->make(true);
+        }
+
+        return response()->json([
+            'message' => 'Bad Request, Something wrong with url'
+        ], 400);
+    }
+
+    public function filterData(Request $request)
+    {
+        if ($request->ajax()) {
+            $filters = SwFilter::query();
+            return DataTables::of($filters)
+                ->rawColumns(['status', 'action', 'image'])
+                ->addColumn('image', function ($filter) {
+                    $route = route('admin.filter.edit', [$filter->id]);
+                    $name = $filter->name;
+                    $image = filter_var($filter->image, FILTER_VALIDATE_URL) ? $filter->image : asset('images/' . $filter->image);
+                    $defaultImg = asset('images/user/default.jpg');
+                    $html = '<div class="d-flex justify-content-start align-items-center">
+                            <div class="avatar-wrapper"><div class="avatar avatar-xl me-3">
+                                <img src="' . $image . '" alt="Avatar" class=""
+                                onerror="this.onerror=null; this.src=`' . $defaultImg . '`;"
+                                >
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <a href="' . $route . '" class="text-body text-truncate">
+                                <span class="fw-semibold">' . $name . '</span>
+                            </a>
+                        </div>';
+                    return $html;
+                })
+                ->addColumn('status', function ($filter) {
+                    if ($filter->status) {
+                        return "<button class='btn btn-success active'
+                                                onclick='statusChange(this,  $filter->id )'>Active</button>";
+                    } else {
+                        return "<button class='btn btn-warning block'
+                                                onclick='statusChange(this,  $filter->id )'>Block</button>";
+                    }
+                })
+                ->addColumn('action', function ($filter) {
+                    $deleteHtml = $filter->type == 'simple' ? "<a href='javascript:;' onclick='deleteFilter(this,  $filter->id )' class='dropdown-item text-danger delete-record'>Delete</a>" : '';
+                    $route = route('admin.filter.edit', [$filter->id]);
                     $html = "<div class='d-inline-block'>
                         <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
                             <i class='bx bx-dots-vertical-rounded'></i>

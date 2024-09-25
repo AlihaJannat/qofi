@@ -104,7 +104,7 @@
                                     <span class="fw-bold me-2">Name:</span>
                                     <span>{{ $shop->name }}</span>
                                 </li>
-                                
+
                                 <li class="mb-3">
                                     <span class="fw-bold me-2">Owner:</span>
                                     <span>{{ $shop->owner?->email }}</span>
@@ -310,6 +310,19 @@
                                 <label>Longitude</label>
                                 <input type="number" step="0.0000001" name="longitude" class="form-control" required
                                     value="{{ $shop->longitude }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Filters</label>
+                                <select name="filters[]" class="select2 form-select select2-hidden-accessible" required multiple>
+                                    <option value="">Select Filters</option>
+                                    @foreach ($filters as $filter)
+                                        <option value="{{ $filter->id }}" {{ in_array($filter->id, $selectedFilters) ? 'selected' : '' }}>
+                                            {{ $filter->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 

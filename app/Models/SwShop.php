@@ -37,4 +37,8 @@ class SwShop extends Model
     {
         return $this->hasOne(SwDeliveryCharges::class, 'sw_shop_id', 'id');
     }
+
+    public function filters() {
+        return $this->belongsToMany(SwFilter::class, 'sw_shop_filters', 'sw_shop_id', 'sw_filter_id');
+    }
 }

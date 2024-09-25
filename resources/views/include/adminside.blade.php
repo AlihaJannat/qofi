@@ -103,12 +103,23 @@ $superAdmin = auth('admin')->user()->id == 1;
         auth('admin')->user()->roleRel?->permissions->contains('name', 'category_view') || $superAdmin;
         $shopView = auth('admin')->user()->roleRel?->permissions->contains('name', 'shop_view') || $superAdmin;
         $colorView = auth('admin')->user()->roleRel?->permissions->contains('name', 'color_view') || $superAdmin;
+        $filterView = auth('admin')->user()->roleRel?->permissions->contains('name', 'filter_view') || $superAdmin;
         $heightView = auth('admin')->user()->roleRel?->permissions->contains('name', 'height_view') || $superAdmin;
         $productAttributeSetView = auth('admin')->user()->roleRel?->permissions->contains('name', 'attribute_view') ||
         $superAdmin;
         $calendarView =
         auth('admin')->user()->roleRel?->permissions->contains('name', 'calendar_view') || $superAdmin;
         @endphp
+
+        @if ($filterView)
+        <li
+            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.filter.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
+            <a href="{{ route('admin.filter.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons fa fa-filter"></i>
+                <div data-i18n="Filters">Filters</div>
+            </a>
+        </li>
+        @endif
         @if ($shopView)
         <li
             class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.shop.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
@@ -127,6 +138,8 @@ $superAdmin = auth('admin')->user()->id == 1;
             </a>
         </li>
         @endif
+
+
         @if ($heightView)
         <li
             class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.height.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">

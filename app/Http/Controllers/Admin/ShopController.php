@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Utils\ShopUtils;
+use App\Models\SwFilter;
 use App\Models\SwProduct;
 use App\Models\SwShop;
 use App\Models\SwVendor;
@@ -47,11 +48,20 @@ class ShopController extends Controller
                 'longitude' => [
                     'required',
                     'regex:/^[-]?(([1]?[0-7]?[0-9])\.(\d+))|(180(\.0+)?)$/'
-                ]
+                ],
+                'filters' => 'required|array',
             ]);
 
 
             $shop = $this->shopUtils->createShop($request);
+
+             // Insert selected filters into sw_shop_filters table
+            foreach ($request->filters as $filterId) {
+                DB::table('sw_shop_filters')->insert([
+                    'sw_shop_id' => $shop->id,
+                    'sw_filter_id' => $filterId,
+                ]);
+            }
 
             DB::table('sw_vendors')->where('id', $shop->owner_id)->update([
                 'sw_shop_id' => $shop->id
@@ -65,8 +75,10 @@ class ShopController extends Controller
         $shopOwners = SwVendor::where('role', 'owner')
             ->whereNull('sw_shop_id')
             ->get();
+        $filters = SwFilter::where('status','1')->get();
 
-        return view('admin.shop.new', compact('states', 'shopOwners'));
+
+        return view('admin.shop.new', compact('states', 'shopOwners','filters'));
     }
 
     public function edit(Request $request, $shop_id)
@@ -94,21 +106,34 @@ class ShopController extends Controller
                     'regex:/^[-]?(([1]?[0-7]?[0-9])\.(\d+))|(180(\.0+)?)$/'
                 ],
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:3072',
+                'filters' => 'required|array',
             ]);
 
             $this->shopUtils->updateShop($request, $shop);
+
+            // Delete old filters for the shop
+            DB::table('sw_shop_filters')->where('sw_shop_id', $shop_id)->delete();
+
+            // Insert selected filters into sw_shop_filters table
+            foreach ($request->filters as $filterId) {
+                DB::table('sw_shop_filters')->insert([
+                    'sw_shop_id' => $shop->id,
+                    'sw_filter_id' => $filterId,
+                ]);
+            }
 
             return to_route('admin.shop.edit', $shop->id)->with('status', "Shop Info Updated");
         }
 
         $states = DB::table('states')->where('country_code', 'like', 'KW')->get(['id', 'name']);
         $cities = DB::table('cities')->where('state_id', $shop->state_id)->get();
-
+        $filters = SwFilter::where('status','1')->get();
+        $selectedFilters = DB::table('sw_shop_filters')->where('sw_shop_id', $shop->id)->pluck('sw_filter_id')->toArray();
         $shopOwners = SwVendor::where('role', 'owner')
             ->whereNull('sw_shop_id')
             ->get();
 
-        return view('admin.shop.view', compact('shop', 'states', 'cities', 'shopOwners'));
+        return view('admin.shop.view', compact('shop', 'states', 'cities', 'shopOwners','filters','selectedFilters'));
     }
 
     public function status(Request $request)

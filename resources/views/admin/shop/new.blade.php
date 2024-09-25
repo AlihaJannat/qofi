@@ -73,7 +73,7 @@
                                         required>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Owner</label>
@@ -117,6 +117,19 @@
                                 <div class="form-group">
                                     <label>Longitude</label>
                                     <input type="number" value="{{ old('longitude', null) }}" step="0.0000001" name="longitude" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Filters</label>
+                                    <select name="filters[]" value="{{ old('filters', null) }}" class="select2 form-select select2-hidden-accessible" required multiple>
+                                        <option value="">Select Filters</option>
+                                        @foreach ($filters as $filter)
+                                            <option value="{{ $filter->id }}">
+                                                {{ $filter->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
