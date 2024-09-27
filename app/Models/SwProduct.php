@@ -36,6 +36,11 @@ class SwProduct extends Model
         return $this->belongsToMany(SwColor::class, 'sw_product_color', 'sw_product_id', 'sw_color_id');
     }
 
+    public function toppings()
+    {
+        return $this->hasMany(SwProductTopping::class);
+    }
+
     public function heights(): HasMany
     {
         return $this->hasMany(SwProductHeight::class);
@@ -54,14 +59,13 @@ class SwProduct extends Model
         ]);
     }
 
-    public function getVariationIds(){
-        if($this->has_variation == 1){
+    public function getVariationIds()
+    {
+        if ($this->has_variation == 1) {
 
-            return $this->where('parent_variation' , $this->id)->pluck('id');
-            
-        }else{
+            return $this->where('parent_variation', $this->id)->pluck('id');
+        } else {
             return [];
         }
-
     }
 }

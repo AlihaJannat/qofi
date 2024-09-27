@@ -15,7 +15,7 @@
         /* Smooth transition */
     }
 
-    #add_variation_main_block.show  {
+    #add_variation_main_block.show {
         display: block;
         opacity: 1;
     }
@@ -154,11 +154,11 @@ $isOwner = $vendor->isOwner();
                                     <input type="text" name="stock" id="stock" class="form-control" required>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label class="form-label">Discount(0 if no discount)</label>
                                 <input type="number" step="0.01" class="form-control" name="discount"
-                                    placeholder="10"  />
+                                    placeholder="10" />
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Discount Type</label>
@@ -167,7 +167,7 @@ $isOwner = $vendor->isOwner();
                                     <option value="fixed">Fixed</option>
                                 </select>
                             </div>
-                            
+
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Short Description</label>
@@ -186,114 +186,23 @@ $isOwner = $vendor->isOwner();
                                     <label class="font-bold">
                                         <input type="checkbox" name="has_variation" id="has_variation">
                                         Has Variations</label>
-                                        <p class="text-danger">You can add Variation once you add the product.</p>
+                                    <p class="text-danger">You can add Variation once you add the product.</p>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="font-bold">
+
+                                        <x-toggle-input id="is_featured" name="is_featured" label="Is Featured"
+                                            value="0" />
+
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- <div class="add_variation_block " id="add_variation_main_block">
-                            <div class="add_variation_block " id="add_variation_block">
-                                <hr class="my-4 mx-n4">
-                                <button type="button" class="remove-variation-btn"
-                                    onclick="removeVariation(this)">x</button>
-                                <h6 class="fw-normal">Variations</h6>
-
-                                <div class="row g-3">
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Attribute</label>
-                                            <select name="sw_category_id" onchange="getChildrenAttribute(this.value)"
-                                                class="form-select" required>
-                                                <option value="">Select Attribute</option>
-                                                @foreach ($product_attribute_set as $pas)
-                                                <option value="{{ $pas->id }}">
-                                                    {{ $pas->title }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Attribute</label>
-                                            <select name="attribute_id" id="child-product-attribute-set"
-                                                class="form-select">
-                                                <option value="">Select Attribute</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Price</label>
-                                        <input type="number" step="0.01" class="form-control" name="price" required />
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Initial Stock</label>
-                                        <input type="number" step="1" class="form-control" name="stock" required />
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label">Discount(0 if no discount)</label>
-                                        <input type="number" step="0.01" class="form-control" name="discount"
-                                            placeholder="10" required />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Discount Type</label>
-                                        <select name="discount_type" class="form-select">
-                                            <option value="percent">Percent %</option>
-                                            <option value="fixed">Fixed</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Button to add more variations -->
-                            <button type="button" id="add-variation-btn" class="btn btn-info my-2">Add More
-                                Variation</button>
-                        </div> --}}
 
 
-                        {{--
-                        <hr class="my-4 mx-n4">
-                        <h6 class="fw-normal">Height / Price</h6>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Height (in cm)</label>
-                                <input type="number" step="0.01" class="form-control" name="height" placeholder="20.2"
-                                    required />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Unit</label>
-                                <select name="sw_unit_id" class="form-select">
-                                    @foreach ($units as $unit)
-                                    <option value="{{ $unit->id }}">{{ $unit->unit }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control" name="price" required />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Discount(0 if no discount)</label>
-                                <input type="number" step="0.01" class="form-control" name="discount" placeholder="10"
-                                    required />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Discount Type</label>
-                                <select name="discount_type" class="form-select">
-                                    <option value="percent">Percent %</option>
-                                    <option value="fixed">Fixed</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Initial Stock</label>
-                                <input type="number" step="1" class="form-control" name="stock" required />
-                            </div>
-                        </div> --}}
                         <hr class="my-4 mx-n4">
                         <h6 class="fw-normal">Images</h6>
                         <div class="row g-3">
@@ -368,7 +277,12 @@ $isOwner = $vendor->isOwner();
                         </div>
                         @endif --}}
 
-                        
+                        <hr class="my-4 mx-n4">
+
+                        {{-- Topping Section --}}
+                        @include('vendor.product.partials.toppings')
+
+
                         <div class="col-12 pt-4">
                             <button type="submit" name="submitButton" class="btn btn-primary">Submit</button>
                         </div>
@@ -382,7 +296,7 @@ $isOwner = $vendor->isOwner();
 @endsection
 @section('script')
 <script>
-        function updateList(input) {
+    function updateList(input) {
             var files = input.files;
             var imagesList = document.getElementById('fileList');
 
@@ -584,4 +498,5 @@ $isOwner = $vendor->isOwner();
 
         });
 </script>
+
 @endsection

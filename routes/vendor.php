@@ -44,6 +44,9 @@ Route::prefix('product')->as('product.')->middleware('vendor_permission:product_
     Route::post('image/delete', [Vendor\ProductController::class, 'imgDelete'])->name('img.delete')->middleware('vendor_permission:product_edit');
     Route::post('image/new', [Vendor\ProductController::class, 'imgNew'])->name('img.new');
     Route::post('/get-attribute', [vendor\ProductController::class, 'getAttributes'])->name('get.attribute');
+    Route::post('/save-topping', [vendor\ProductController::class, 'addProductTopping'])->name('add.topping');
+    Route::post('/update-topping-status', [vendor\ProductController::class, 'updateProductToppingStatus'])->name('update.topping.status');
+    Route::post('/delete-topping', [vendor\ProductController::class, 'deleteProductTopping'])->name('delete.topping');
 
     Route::prefix('attribute')->name('attribute.')->middleware('vendor_permission:product_attribute')->group(function () {
         Route::get('/yajra', [Vendor\YajraController::class, 'attributeData'])->name('yajra');

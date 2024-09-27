@@ -286,11 +286,12 @@
                             <input type="number" step="0.01" value="{{$product->price}}" class="form-control"
                                 name="price" required />
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Stock</label>
-                                <input type="text" name="stock" id="stock" value="{{$product->stock}}" class="form-control" required>
+                                <input type="text" name="stock" id="stock" value="{{$product->stock}}"
+                                    class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -304,7 +305,7 @@
                         <div class="col-md-6">
                             <label class="form-label">Discount(0 if no discount)</label>
                             <input type="number" step="0.01" value="{{$product->discount}}" class="form-control"
-                                name="discount" placeholder="10"  />
+                                name="discount" placeholder="10" />
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
@@ -320,7 +321,8 @@
                                     rows="5">{{ $product->long_description }}</textarea>
                             </div>
                         </div>
-                        {{-- <hr class="my-4 mx-n4">
+                        {{--
+                        <hr class="my-4 mx-n4">
                         <h6 class="fw-normal">Images</h6> --}}
                         <div class="row g-3">
                             {{-- <div class="col-md-6">
@@ -343,6 +345,17 @@
 
                                 <div id="fileList"></div>
                             </div> --}}
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="font-bold">
+
+                                        <x-toggle-input id="is_featured" name="is_featured" label="Is Featured"
+                                            value="{{$product->is_featured}}" />
+
+                                    </label>
+                                </div>
+                            </div>
 
 
                             <div class="">
@@ -380,6 +393,10 @@
                             </div>
                         </div>
 
+
+                        <hr class="my-4 mx-n4">
+                        {{-- Topping Section --}}
+                        @include('vendor.product.partials.toppings')
 
                         <div class="col-12">
                             <button type="submit" name="submitButton" class="btn btn-primary">Submit</button>
@@ -501,17 +518,17 @@
                     </div>
 
 
-                    <form action="{{ route('vendor.product.attribute.imgupdate') }}" onsubmit="updateVariationImage(event, this)"  method="post">
+                    <form action="{{ route('vendor.product.attribute.imgupdate') }}"
+                        onsubmit="updateVariationImage(event, this)" method="post">
                         @csrf
                         <div class="img_wrap text-center">
-                            <img class="image p-2 border border-2 border-black hover:shadow-lg transition-shadow duration-300 ease-in-out" onclick="changeImgVariation()"
-                                src="" id="edit-image-tag"  width="80" />
+                            <img class="image p-2 border border-2 border-black hover:shadow-lg transition-shadow duration-300 ease-in-out"
+                                onclick="changeImgVariation()" src="" id="edit-image-tag" width="80" />
                         </div>
-                        <input type="hidden" name="id" id="edit-id-image" >
-                        <input type="hidden" name="product_id" id="edit-product-id" >
-                        <input type="file" id="myFileVariation"
-                            onchange="onMyFileChangeVariation(event,this)" name="image"
-                            style="display:none" />
+                        <input type="hidden" name="id" id="edit-id-image">
+                        <input type="hidden" name="product_id" id="edit-product-id">
+                        <input type="file" id="myFileVariation" onchange="onMyFileChangeVariation(event,this)"
+                            name="image" style="display:none" />
                         <input type="submit" id="submitimage" style="display:none">
                     </form>
 
@@ -581,7 +598,7 @@
 @endsection
 @section('script')
 <script>
-        function updateList(input) {
+    function updateList(input) {
                 var files = input.files;
                 var imagesList = document.getElementById('fileList');
 

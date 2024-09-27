@@ -4,6 +4,7 @@ namespace App\Http\Utils;
 
 use App\Models\SwProduct;
 use App\Models\SwProductHeight;
+use App\Models\SwProductTopping;
 use App\Models\SwShop;
 use App\Models\SwStockHistory;
 use Illuminate\Support\Facades\DB;
@@ -18,10 +19,10 @@ class ProductUtils
         array $validatedColors,
         // array $validatedHeight,
         array $validatedImages,
-        $all_shops
+        $all_shops,
+        array $topping
     ) {
         try {
-
             DB::beginTransaction();
             $vendor = auth('vendor')->user();
 
@@ -31,15 +32,16 @@ class ProductUtils
                 $shopIds = [$vendor->sw_shop_id];
             }
             $imageName = upload_image($validatedProduct['image_name'], 'images/products');
-            
+
             // additional images
             $additionalImages = [];
             foreach ($validatedImages as $image) {
                 $additionalImages[] = upload_image($image, 'images/products');
             }
 
+
             foreach ($shopIds as $key => $shopId) {
-                $validatedProduct['image_name'] = "/products/".copy_image(public_path('images/products/' . $imageName), "images/products");
+                $validatedProduct['image_name'] = "/products/" . copy_image(public_path('images/products/' . $imageName), "images/products");
 
                 $validatedProduct['sw_shop_id'] = $shopId;
                 $validatedProduct['slug'] = $this->generateSlug($validatedProduct['name'], $validatedProduct['sw_shop_id']);
@@ -61,12 +63,32 @@ class ProductUtils
                 }
             }
 
+            // Check if new toppings are provided
+            if (isset($topping['topping_name']) && isset($topping['topping_price'])) {
+                foreach ($topping['topping_name'] as $index => $toppingName) {
+                    $toppingPrice = $topping['topping_price'][$index]; // Get corresponding price
+
+                    if (!empty($toppingName) && !empty($toppingPrice)) {
+                        // Create new topping and associate it with the product
+                        $newTopping = new SwProductTopping();
+                        $newTopping->name = $toppingName;
+                        $newTopping->price = $toppingPrice;
+                        $newTopping->sw_product_id = $product->id;
+                        $newTopping->status = 1;
+                        $newTopping->save();
+                    }
+                }
+            }
+
+
+
             delete_image($imageName, "images/products/");
             foreach ($additionalImages as $key => $image) {
                 delete_image($image, "images/products/");
             }
 
             DB::commit();
+            return $product;
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;
@@ -74,11 +96,11 @@ class ProductUtils
     }
 
     public function update(
-        array $validatedProduct, 
+        array $validatedProduct,
         // array $validatedCategories, 
-        array $validatedColors, 
-        SwProduct $product)
-    {
+        array $validatedColors,
+        SwProduct $product
+    ) {
         try {
             DB::beginTransaction();
             $validatedProduct['slug'] = $this->generateSlug($validatedProduct['name'], $product->sw_shop_id);

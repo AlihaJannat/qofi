@@ -12,6 +12,7 @@ use App\Models\SwColor;
 use App\Models\SwProduct;
 use App\Models\SwProductAttributeSet;
 use App\Models\SwProductImage;
+use App\Models\SwProductTopping;
 use App\Models\SwUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,24 +49,30 @@ class ProductController extends Controller
                 'stock' => 'required|integer',
             ]);
 
-            
-            
+
+            $topping['topping_name'] = ($request->has('topping_name') ? $request->topping_name : '');
+            $topping['topping_price'] = ($request->has('topping_price') ? $request->topping_price : '');
+            $validated['is_featured'] = ($request->has('is_featured') ? 1 : 0);
+
+
             $product = $this->productUtils->create(
                 $validated,
                 [],
                 $relationValidation['image'] ?? [],
-                $request->all_shops
+                $request->all_shops,
+                $topping
             );
 
+            // $existingToppings = SwProductTopping::where()
             // return to_route('vendor.product.create')->with('status', "Product Created!");
+
             return to_route('vendor.product.edit', [$product->id])->with('status', 'Product updated');
         }
 
-        // $colors = SwColor::get(['id', 'name', 'hex_code']);
         $countries = DB::table('countries')->get(['id', 'name']);
         $categories = SwCategory::where('status', 1)->get();
         $units = SwUnit::where('name', 'like', 'height')->get();
-        $categories = SwCategory::where('status', 1)->whereNull('parent_id')->get(['id','name']);
+        $categories = SwCategory::where('status', 1)->whereNull('parent_id')->get(['id', 'name']);
         return view('vendor.product.new', get_defined_vars());
     }
 
@@ -87,15 +94,16 @@ class ProductController extends Controller
                 'discount_type' => 'in:fixed,percent',
                 'stock' => 'required|integer',
             ]);
-            // dd($validated);
-            
-        $validated['has_variation'] = ($request->has('has_variation') ? 1 : 0);
+
+
+            $validated['is_featured'] = ($request->has('is_featured') ? 1 : 0);
+            $validated['has_variation'] = ($request->has('has_variation') ? 1 : 0);
 
 
             $this->productUtils->update(
-                $validated, 
+                $validated,
                 // $relationValidation['category_id'], 
-                [], 
+                [],
                 $product
             );
 
@@ -106,10 +114,11 @@ class ProductController extends Controller
         $selectedCategories = DB::table('sw_product_category')->where('sw_product_id', $product->id)->pluck('sw_category_id')->toArray();
         $colors = SwColor::get(['id', 'name', 'hex_code']);
         $countries = DB::table('countries')->get(['id', 'name']);
-        $categories = SwCategory::where('status', 1)->whereNull('parent_id')->get(['id','name']);
-        $childCategories = SwCategory::where('parent_id', $product->sw_category_id)->get(['id','name']);
-        $product_attribute_set = SwProductAttributeSet::where('status',1)->get();
-
+        $categories = SwCategory::where('status', 1)->whereNull('parent_id')->get(['id', 'name']);
+        $childCategories = SwCategory::where('parent_id', $product->sw_category_id)->get(['id', 'name']);
+        $product_attribute_set = SwProductAttributeSet::where('status', 1)->get();
+        $existing_toppings = SwProductTopping::where('sw_product_id', $product->id)->get();
+        // dd($existing_toppings);
         return view('vendor.product.edit', get_defined_vars());
     }
 
@@ -181,18 +190,19 @@ class ProductController extends Controller
 
         return response()->json('done');
     }
-    
+
     public function getAttributes(Request $request)
     {
-        
-        $set = SwProductAttributeSet::where('id',$request->id)->first();
+
+        $set = SwProductAttributeSet::where('id', $request->id)->first();
         $attributes = $set->attributes;
         return response()->json(['attributes' => $attributes]);
     }
 
-    public function addAttribute(StoreProductVariationRequest $request){
+    public function addAttribute(StoreProductVariationRequest $request)
+    {
         $parent_product = SwProduct::find($request->parent_product_id)->toArray();
-       
+
         $validated = $request->validate([
             'parent_product_id' => 'required',
             'variation_id' => 'required',
@@ -215,15 +225,13 @@ class ProductController extends Controller
             $relationValidation['image'] ?? [],
             $request->all_shops
         );
-        
-        return response()->json(['success' => true],200);
+
+        return response()->json(['success' => true], 200);
     }
 
-    public function getAttribute(SwProduct $product){
+    public function getAttribute(SwProduct $product) {}
 
-    }
 
-    
     public function deleteAttribute(Request $request)
     {
         $variation = ProductVariations::findorFail($request->id);
@@ -235,32 +243,84 @@ class ProductController extends Controller
         return response()->json('done');
     }
 
-    
+
     public function updateImage(Request $request)
     {
-        
+
         if ($request->file('image')) {
             // dd($request->all());
 
             //function defined in helpers.php
             $fileName = upload_image($request->file('image'), '/images/products');
-            
+
             $product = SwProduct::findorfail($request->product_id);
             delete_image($product->image_name, '/images');
             $product->image_name = "/products/" . $fileName;
             $product->save();
-            return response()->json(['success' => true],200);
-        }else{
+            return response()->json(['success' => true], 200);
+        } else {
             return response()->json([
                 "error" => "something went wrong please try letter"
             ], 400);
         }
     }
 
-    public function updateDefault(ProductVariations $product_variation){
+    public function updateDefault(ProductVariations $product_variation)
+    {
         $this->productUtils->updateProductDefaultVariation($product_variation);
-        return response()->json(['success' => true],200);
+        return response()->json(['success' => true], 200);
     }
 
 
+    public function addProductTopping(Request $request)
+    {
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'product_id' => 'required|exists:sw_products,id', // Ensure the product ID exists
+        ]);
+
+        // Create the new topping and associate it with the product
+        $topping = new SwProductTopping();
+        $topping->name = $validatedData['name'];
+        $topping->price = $validatedData['price'];
+        $topping->sw_product_id = $validatedData['product_id'];
+        $topping->status = 1;
+        $topping->save();
+
+
+        // Return a JSON response with success status and topping data
+        return response()->json([
+            'success' => true,
+            'topping' => $topping,
+        ]);
+    }
+
+    public function updateProductToppingStatus(Request $request)
+    {
+        $topping = SwProductTopping::find($request->topping_id);
+
+        if ($topping) {
+            $topping->status = $request->status;
+            $topping->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 400);
+    }
+
+    public function deleteProductTopping(Request $request)
+    {
+        $topping = SwProductTopping::find($request->topping_id);
+
+        if ($topping) {
+            $topping->delete();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 400);
+    }
 }
