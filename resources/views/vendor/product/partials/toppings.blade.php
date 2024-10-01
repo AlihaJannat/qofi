@@ -167,17 +167,18 @@ $productId = (isset($product) ? $product->id : 0);
 
                   // Add the new topping to the toppings list
                   let status = data.topping.status ? 'checked' : '';
+                  
                   const newToppingBlock = `
                       <div class="topping-card topping-card-block border rounded-lg p-2 shadow-md flex items-center justify-between mb-1">
                           <div class="topping-card-block">
-                              <input type="checkbox" name="topping_active[]" value="${data.topping.status}" ${status} class="form-checkbox h-5 w-5 text-blue-600 toggle-topping-status" data-topping-id="${data.topping.id}">
-                              <div class="topping-details">
-                                  <strong class="block text-lg font-semibold">${data.topping.name}</strong>
-                                  <span class="text-gray-500">{{app_setting('site_currency')}} ${data.topping.price}</span>
-                              </div>
+                            <input type="checkbox" name="topping_active[]" value="${data.topping.status}" ${status} class="form-checkbox h-5 w-5 text-blue-600 toggle-topping-status" data-topping-id="${data.topping.id}">
+                            <div class="topping-details">
+                              <strong class="block text-lg font-semibold">${data.topping.name}</strong>
+                              <span class="text-gray-500">{{app_setting('site_currency')}} ${data.topping.price}</span>
+                            </div>
                           </div>
                           <i class="fas fa-trash delete-topping" data-topping-id="${data.topping.id}"></i>
-                      </div>
+                        </div>
                   `;
 
                   // Insert the new topping in the list
@@ -248,10 +249,14 @@ $productId = (isset($product) ? $product->id : 0);
     // });
 
     // Updating status
-    document.querySelectorAll('.toggle-topping-status').forEach(function(checkbox) {
-      checkbox.addEventListener('change', function() {
-        const toppingId = this.getAttribute('data-topping-id');
-        const isActive = this.checked ? 1 : 0;
+    // Attach the event listener to a parent container that will contain the toppings
+    document.querySelector('.toppings-list').addEventListener('change', function(event) {
+      // Check if the event target is the checkbox with the class 'toggle-topping-status'
+      if (event.target.classList.contains('toggle-topping-status')) {
+        const checkbox = event.target;
+        const toppingId = checkbox.getAttribute('data-topping-id');
+        const isActive = checkbox.checked ? 1 : 0;
+        console.log('updating status of id ' + toppingId);
 
         $('#status-loading').show();
         fetch('{{ route('vendor.product.update.topping.status') }}', {
@@ -275,14 +280,16 @@ $productId = (isset($product) ? $product->id : 0);
           }
         })
         .catch(error => console.error('Error:', error));
-      });
+      }
     });
 
+
     // Deleting topping
-    document.querySelectorAll('.delete-topping').forEach(function(deleteIcon) {
-      deleteIcon.addEventListener('click', function() {
-        const toppingId = this.getAttribute('data-topping-id');
-        
+    document.querySelector('.toppings-list').addEventListener('click', function(event) {
+      if (event.target.classList.contains('delete-topping')) {
+        const deleteIcon = event.target;
+        const toppingId = deleteIcon.getAttribute('data-topping-id');
+
         $('#status-loading').show();
         fetch('{{ route('vendor.product.delete.topping') }}', {
           method: 'POST',
@@ -299,14 +306,15 @@ $productId = (isset($product) ? $product->id : 0);
           $('#status-loading').hide();
           if (data.success) {
             showSuccessMessage();
-            this.closest('.topping-card').remove(); // Remove the card
+            deleteIcon.closest('.topping-card').remove(); // Remove the card
           } else {
             alert('Error deleting topping');
           }
         })
         .catch(error => console.error('Error:', error));
-      });
+      }
     });
+
 
     function showSuccessMessage(){
       var successMessage = document.getElementById('success-status-update');

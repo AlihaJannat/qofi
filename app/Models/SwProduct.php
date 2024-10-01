@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class SwProduct extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
+
 
     public function shop(): BelongsTo
     {
@@ -24,6 +26,10 @@ class SwProduct extends Model
     public function images(): HasMany
     {
         return $this->hasMany(SwProductImage::class);
+    }
+    public function relatedProducts()
+    {
+        return $this->belongsToMany(SwProduct::class, 'sw_related_products', 'sw_product_id', 'related_product_id');
     }
 
     public function categories(): BelongsToMany
@@ -67,5 +73,21 @@ class SwProduct extends Model
         } else {
             return [];
         }
+    }
+    public function getCountry()
+    {
+        return DB::table('countries')
+            ->where('id', $this->country_id)
+            ->select('*')
+            ->first(); // Use first() to get a single record
+
+    }
+    public function getCategory()
+    {
+        return SwCategory::where('id', $this->sw_category_id)->first();
+    }
+    public function getSubCategory()
+    {
+        return SwCategory::where('id', $this->child_category_id)->first();
     }
 }

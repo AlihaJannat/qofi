@@ -217,3 +217,17 @@ function app_setting($key, $default = null)
 {
     return app('app_settings')[$key] ?? $default;
 }
+
+if (!function_exists('formatDate')) {
+    /**
+     * Format a given date.
+     *
+     * @param  string|\DateTime  $date
+     * @param  string  $format
+     * @return string
+     */
+    function formatDate($date, $format = 'd-m-Y')
+    {
+        return \Carbon\Carbon::parse($date)->format($format);
+    }
+}

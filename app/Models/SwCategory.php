@@ -38,12 +38,12 @@ class SwCategory extends Model
 
     public function navProducts(): HasMany
     {
-    // return $this->hasMany(SwProduct::class)
-    //     ->where('status', 1);
+        // return $this->hasMany(SwProduct::class)
+        //     ->where('status', 1);
 
         return $this->hasMany(SwProduct::class)
             ->join('sw_shops', 'sw_shops.id', 'sw_products.sw_shop_id')
-            ->orderByDesc('featured')
+            ->orderByDesc('is_featured')
             ->where('sw_products.status', 1)
             ->limit(4)
             ->select('sw_products.id', 'sw_products.sw_category_id', 'sw_products.name', 'sw_products.slug', 'sw_products.image_name', 'sw_products.short_description', 'sw_shops.slug as shop_slug');

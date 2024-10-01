@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProductVariations;
+use App\Models\SwProductVariations;
 use App\Models\SwCoupon;
 use App\Models\SwOrder;
 use App\Models\SwProduct;
@@ -203,7 +203,7 @@ class YajraController extends Controller
         // $canDelete = $request->canDelete;
         $parentProduct = SwProduct::find($request->parentProduct);
         $variationProduct = $parentProduct->getVariationIds();
-        $variations = ProductVariations::whereIn('product_id', $variationProduct)->orderBy('created_at', 'asc')->with('product')->get();
+        $variations = SwProductVariations::whereIn('product_id', $variationProduct)->orderBy('created_at', 'asc')->with('product')->get();
 
         // dd($variations);
         // if ($request->status == 'active') {

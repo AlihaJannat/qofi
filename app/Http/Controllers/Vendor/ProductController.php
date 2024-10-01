@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Vendor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductVariationRequest;
 use App\Http\Utils\ProductUtils;
-use App\Models\ProductVariations;
+use App\Models\SwProductVariations;
 use App\Models\SwAttribute;
 use App\Models\SwCategory;
 use App\Models\SwColor;
@@ -13,6 +13,7 @@ use App\Models\SwProduct;
 use App\Models\SwProductAttributeSet;
 use App\Models\SwProductImage;
 use App\Models\SwProductTopping;
+use App\Models\SwRelatedProducts;
 use App\Models\SwUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -52,15 +53,17 @@ class ProductController extends Controller
 
             $topping['topping_name'] = ($request->has('topping_name') ? $request->topping_name : '');
             $topping['topping_price'] = ($request->has('topping_price') ? $request->topping_price : '');
+            $validated['has_variation'] = ($request->has('has_variation') ? 1 : 0);
             $validated['is_featured'] = ($request->has('is_featured') ? 1 : 0);
-
+            $related_product = ($request->has('related_products') ? explode(',', $request->related_products) : []);
 
             $product = $this->productUtils->create(
                 $validated,
                 [],
                 $relationValidation['image'] ?? [],
                 $request->all_shops,
-                $topping
+                $topping,
+                $related_product
             );
 
             // $existingToppings = SwProductTopping::where()
@@ -73,6 +76,8 @@ class ProductController extends Controller
         $categories = SwCategory::where('status', 1)->get();
         $units = SwUnit::where('name', 'like', 'height')->get();
         $categories = SwCategory::where('status', 1)->whereNull('parent_id')->get(['id', 'name']);
+        $allproducts = SwProduct::where('parent_variation', 0)->get();
+
         return view('vendor.product.new', get_defined_vars());
     }
 
@@ -98,13 +103,15 @@ class ProductController extends Controller
 
             $validated['is_featured'] = ($request->has('is_featured') ? 1 : 0);
             $validated['has_variation'] = ($request->has('has_variation') ? 1 : 0);
+            $related_product = ($request->has('related_products') ? explode(',', $request->related_products) : []);
 
 
             $this->productUtils->update(
                 $validated,
                 // $relationValidation['category_id'], 
                 [],
-                $product
+                $product,
+                $related_product
             );
 
             return to_route('vendor.product.edit', [$product->id])->with('status', 'Product updated');
@@ -118,6 +125,8 @@ class ProductController extends Controller
         $childCategories = SwCategory::where('parent_id', $product->sw_category_id)->get(['id', 'name']);
         $product_attribute_set = SwProductAttributeSet::where('status', 1)->get();
         $existing_toppings = SwProductTopping::where('sw_product_id', $product->id)->get();
+        $allproducts = SwProduct::where('parent_variation', 0)->where('id', '!=', $product->id)->get();
+        $existing_related_products = SwRelatedProducts::where('sw_product_id', $product->id)->get();
         // dd($existing_toppings);
         return view('vendor.product.edit', get_defined_vars());
     }
@@ -234,7 +243,7 @@ class ProductController extends Controller
 
     public function deleteAttribute(Request $request)
     {
-        $variation = ProductVariations::findorFail($request->id);
+        $variation = SwProductVariations::findorFail($request->id);
         // $product = SwProduct::findorfail($variation->product_id);
 
         $variation->product->delete();
@@ -265,7 +274,7 @@ class ProductController extends Controller
         }
     }
 
-    public function updateDefault(ProductVariations $product_variation)
+    public function updateDefault(SwProductVariations $product_variation)
     {
         $this->productUtils->updateProductDefaultVariation($product_variation);
         return response()->json(['success' => true], 200);

@@ -22,16 +22,16 @@ class StoreProductVariationRequest extends FormRequest
      */
     public function rules(): array
     {
-        
+
         return [
             'variation_id' => 'required|integer',
             'product_variation_set_id' => 'required|integer',
             'parent_product_id' => [
                 'required',
-                Rule::unique('product_variations')
+                Rule::unique('sw_product_variations')
                     ->where(function ($query) {
                         return $query->where('variation_id', $this->variation_id)
-                                     ->where('product_variation_set_id', $this->product_variation_set_id);
+                            ->where('product_variation_set_id', $this->product_variation_set_id);
                     })
             ],
         ];

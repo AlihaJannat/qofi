@@ -283,6 +283,12 @@ $isOwner = $vendor->isOwner();
                         @include('vendor.product.partials.toppings')
 
 
+                        <hr class="my-4 mx-n4">
+
+                        {{-- related products Section --}}
+                        @include('vendor.product.partials.relatedProducts')
+
+
                         <div class="col-12 pt-4">
                             <button type="submit" name="submitButton" class="btn btn-primary">Submit</button>
                         </div>
