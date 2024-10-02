@@ -31,9 +31,15 @@ class MainBannerController extends Controller
             $banner->image = "/main_banner/" . upload_image($request->file('image'), 'images/main_banner');
             $banner->title = $request->title;
             $banner->has_button = $request->has_button;
-            $banner->button_color = $request->button_color;
-            $banner->button_bg_color = $request->button_bg_color;
-            $banner->button_text = $request->button_text;
+            if ($request->has_button) {
+                $banner->button_color = $request->button_color;
+                $banner->button_bg_color = $request->button_bg_color;
+                $banner->button_text = $request->button_text;
+            } else {
+                $banner->button_color = null;
+                $banner->button_bg_color = null;
+                $banner->button_text = null;
+            }
             $banner->sort_order = $request->sort_order;
             $banner->save();
             return redirect()->route('admin.main-banner.new')->with('status', "banner Added SuccessFully");
@@ -57,9 +63,15 @@ class MainBannerController extends Controller
             ]);
             $banner->title = $request->title;
             $banner->has_button = $request->has_button;
-            $banner->button_color = $request->button_color;
-            $banner->button_bg_color = $request->button_bg_color;
-            $banner->button_text = $request->button_text;
+                if ($request->has_button) {
+                    $banner->button_color = $request->button_color;
+                    $banner->button_bg_color = $request->button_bg_color;
+                    $banner->button_text = $request->button_text;
+                } else {
+                    $banner->button_color = null;
+                    $banner->button_bg_color = null;
+                    $banner->button_text = null;
+                }
             $banner->sort_order = $request->sort_order;
             $banner->save();
 
