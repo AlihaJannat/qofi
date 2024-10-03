@@ -135,6 +135,18 @@ $isOwner = $vendor->isOwner();
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label>Origin</label>
+                                    <select name="sw_product_origin_id" class="form-select" required>
+                                        <option value="">Select Origin</option>
+                                        @foreach ($origins as $origin)
+                                        <option value="{{ $origin->id }}">
+                                            {{ $origin->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label>In-Stock?</label>
                                     <select name="in_stock" class="form-select" required>
                                         <option value="1">Yes</option>

@@ -128,7 +128,7 @@
       const relatedProductsInput = document.getElementById('related_products_input');
 
       // Load the existing related product IDs from the database (converted to JSON)
-      let selectedProducts = @json($existing_related_products->pluck('relatedproduct.id'));
+      let selectedProducts = @json(isset($existing_related_products) ? $existing_related_products->pluck('relatedproduct.id') : []);
       selectedProducts = selectedProducts.map(id => String(id));  // Convert them to strings
 
       let allProducts = @json($allproducts);  // Assuming products are passed to the frontend as JSON

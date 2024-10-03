@@ -46,6 +46,10 @@ class SwProduct extends Model
     {
         return $this->hasMany(SwProductTopping::class);
     }
+    public function productorigin()
+    {
+        return $this->belongsTo(SwProductOrigin::class);
+    }
 
     public function heights(): HasMany
     {
@@ -89,5 +93,10 @@ class SwProduct extends Model
     public function getSubCategory()
     {
         return SwCategory::where('id', $this->child_category_id)->first();
+    }
+
+    public function getOrigin()
+    {
+        return SwProductOrigin::where('id', $this->sw_category_id)->first();
     }
 }

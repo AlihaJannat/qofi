@@ -12,6 +12,7 @@ use App\Models\SwColor;
 use App\Models\SwProduct;
 use App\Models\SwProductAttributeSet;
 use App\Models\SwProductImage;
+use App\Models\SwProductOrigin;
 use App\Models\SwProductTopping;
 use App\Models\SwRelatedProducts;
 use App\Models\SwUnit;
@@ -48,6 +49,7 @@ class ProductController extends Controller
                 'has_variation' => 'nullable',
                 'discount_type' => 'in:fixed,percent',
                 'stock' => 'required|integer',
+                'sw_product_origin_id' => 'required',
             ]);
 
 
@@ -55,8 +57,8 @@ class ProductController extends Controller
             $topping['topping_price'] = ($request->has('topping_price') ? $request->topping_price : '');
             $validated['has_variation'] = ($request->has('has_variation') ? 1 : 0);
             $validated['is_featured'] = ($request->has('is_featured') ? 1 : 0);
-            $related_product = ($request->has('related_products') ? explode(',', $request->related_products) : []);
-
+            $related_product = ($request->related_products != null ? explode(',', $request->related_products) : []);
+            // dd($request);
             $product = $this->productUtils->create(
                 $validated,
                 [],
@@ -77,6 +79,7 @@ class ProductController extends Controller
         $units = SwUnit::where('name', 'like', 'height')->get();
         $categories = SwCategory::where('status', 1)->whereNull('parent_id')->get(['id', 'name']);
         $allproducts = SwProduct::where('parent_variation', 0)->get();
+        $origins = SwProductOrigin::where('status', 1)->get();
 
         return view('vendor.product.new', get_defined_vars());
     }
@@ -98,12 +101,13 @@ class ProductController extends Controller
                 'has_variation' => 'nullable',
                 'discount_type' => 'in:fixed,percent',
                 'stock' => 'required|integer',
+                'sw_product_origin_id' => 'required',
             ]);
 
 
             $validated['is_featured'] = ($request->has('is_featured') ? 1 : 0);
             $validated['has_variation'] = ($request->has('has_variation') ? 1 : 0);
-            $related_product = ($request->has('related_products') ? explode(',', $request->related_products) : []);
+            $related_product = ($request->related_products != null ? explode(',', $request->related_products) : []);
 
 
             $this->productUtils->update(
@@ -127,7 +131,8 @@ class ProductController extends Controller
         $existing_toppings = SwProductTopping::where('sw_product_id', $product->id)->get();
         $allproducts = SwProduct::where('parent_variation', 0)->where('id', '!=', $product->id)->get();
         $existing_related_products = SwRelatedProducts::where('sw_product_id', $product->id)->get();
-        // dd($existing_toppings);
+        $origins = SwProductOrigin::where('status', 1)->get();
+
         return view('vendor.product.edit', get_defined_vars());
     }
 

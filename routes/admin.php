@@ -197,6 +197,14 @@ Route::prefix('productattributeset')->as('productattributeset.')->group(function
     Route::delete('/attribute/delete', [Admin\ProductAttributeSetController::class, 'deleteAttribute'])->name('attribute.delete');
 });
 
+Route::prefix('productorigin')->as('productorigin.')->group(function () {
+    Route::get('/', [Admin\ProductoriginController::class, 'index'])->name('index');
+    Route::get('yajra', [Admin\YajraController::class, 'productOriginData'])->name('yajra');
+    Route::post('/add', [Admin\ProductoriginController::class, 'add'])->name('add');
+    Route::post('/update', [Admin\ProductoriginController::class, 'update'])->name('update');
+    Route::delete('/delete', [Admin\ProductoriginController::class, 'delete'])->name('delete');
+    Route::get('/status', [Admin\ProductoriginController::class, 'changeStatus'])->name('status');
+});
 Route::prefix('cms')->as('cms.')->group(function () {
     Route::get('{page_name}', [Admin\CmsController::class, 'get'])->name('get');
     Route::post('edit/{page}', [Admin\CmsController::class, 'edit'])->name('edit');

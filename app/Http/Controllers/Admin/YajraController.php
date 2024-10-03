@@ -13,6 +13,7 @@ use App\Models\SwMainBanner;
 use App\Models\SwOrder;
 use App\Models\SwProduct;
 use App\Models\SwProductAttributeSet;
+use App\Models\SwProductOrigin;
 use App\Models\SwRole;
 use App\Models\SwShop;
 use App\Models\SwShopCategory;
@@ -955,6 +956,54 @@ class YajraController extends Controller
                         $editLink
                     </div>
                 </div>";
+                return $html;
+            })
+            ->make(true);
+    }
+
+
+    public function productOriginData(Request $request)
+    {
+        if (!$request->ajax()) {
+            return response()->json([
+                'message' => 'Bad Request, Something wrong with url'
+            ], 400);
+        }
+        $canEdit = $request->canEdit;
+        $canDelete = $request->canDelete;
+        $origins = SwProductOrigin::query();
+
+        return DataTables::of($origins)
+            ->rawColumns(['status', 'action',])
+            ->addColumn('status', function ($origin) {
+                $click = "onclick='statusChange(this,  $origin->id )'";
+                if ($origin->status) {
+                    return "<button class='btn btn-success active'
+                                            $click>Active</button>";
+                } else {
+                    return "<button class='btn btn-warning block'
+                                            $click>Block</button>";
+                }
+            })
+            ->addColumn('action', function ($origin) use ($canEdit, $canDelete) {
+                $editLink = '';
+                $deleteLink = '';
+                if ($canEdit) {
+                    $editLink = "<a href='javascript:;'onclick='editProductOrigin($origin, $origin->id )' class='dropdown-item'>Edit</a>";
+                }
+                if ($canDelete) {
+                    $deleteLink = "<a href='javascript:;' onclick='deleteProductOrigin(this,  $origin->id )' class='dropdown-item text-danger delete-record'>Delete</a>";
+                }
+                $html = "<div class='d-inline-block'>
+                        <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
+                            <i class='bx bx-dots-vertical-rounded'></i>
+                        </a>
+                        <div class='dropdown-menu dropdown-menu-end m-0'>
+                            $editLink
+                            <div class='dropdown-divider'></div>
+                            $deleteLink
+                        </div>
+                    </div>";
                 return $html;
             })
             ->make(true);

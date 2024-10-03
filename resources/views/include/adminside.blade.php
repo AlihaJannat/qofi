@@ -70,31 +70,33 @@ $superAdmin = auth('admin')->user()->id == 1;
         @endif
 
         @php
-            $bannerView = auth('admin')->user()->roleRel?->permissions->contains('name', 'banner_view') || $superAdmin;
+        $bannerView = auth('admin')->user()->roleRel?->permissions->contains('name', 'banner_view') || $superAdmin;
         @endphp
 
         @if ($bannerView)
-            <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.') ? 'active' : '' }}">
-                <a href="javascript:void(0);"class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-home"></i>
-                    <div data-i18n="Banners">Banners</div>
-                </a>
+        <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.') ? 'active' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-home"></i>
+                <div data-i18n="Banners">Banners</div>
+            </a>
 
-                <!-- Submenu for Banners -->
-                <ul class="menu-sub">
-                    <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.banner.index') }}" class="menu-link">
-                            <div data-i18n="Banners">Banners</div>
-                        </a>
-                    </li>
+            <!-- Submenu for Banners -->
+            <ul class="menu-sub">
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.banner.index') }}" class="menu-link">
+                        <div data-i18n="Banners">Banners</div>
+                    </a>
+                </li>
 
-                    <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.main-banner.') ? 'active' : '' }}">
-                        <a href="{{ route('admin.main-banner.index') }}" class="menu-link">
-                            <div data-i18n="Main Banners">Main Banners</div>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.main-banner.') ? 'active' : '' }}">
+                    <a href="{{ route('admin.main-banner.index') }}" class="menu-link">
+                        <div data-i18n="Main Banners">Main Banners</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         @endif
 
 
@@ -109,6 +111,8 @@ $superAdmin = auth('admin')->user()->id == 1;
         $superAdmin;
         $calendarView =
         auth('admin')->user()->roleRel?->permissions->contains('name', 'calendar_view') || $superAdmin;
+        $productOriginView =
+        auth('admin')->user()->roleRel?->permissions->contains('name', 'origin_view') || $superAdmin;
         @endphp
 
         @if ($filterView)
@@ -151,10 +155,19 @@ $superAdmin = auth('admin')->user()->id == 1;
         @endif
         @if ($productAttributeSetView)
         <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productattributeset.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
+            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productattributeset.') && !Str::startsWith(Route::currentRouteName(), 'admin.productattributeset') ? 'active' : '' }}">
             <a href="{{ route('admin.productattributeset.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons fa fa-balance-scale"></i>
                 <div data-i18n="Product Attribute Set">Product Attribute Set</div>
+            </a>
+        </li>
+        @endif
+        @if ($productOriginView)
+        <li
+            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productorigin.') && !Str::startsWith(Route::currentRouteName(), 'admin.productorigin') ? 'active' : '' }}">
+            <a href="{{ route('admin.productorigin.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons fa fa-globe"></i>
+                <div data-i18n="Product Origin">Product Origin</div>
             </a>
         </li>
         @endif

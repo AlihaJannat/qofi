@@ -12,17 +12,11 @@ use App\Models\SwProductAttributeSet;
 
 class ProductAttributeSetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return view('admin.productattributeset.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function add(Request $request)
     {
         $validated = $request->validate([
@@ -33,12 +27,12 @@ class ProductAttributeSetController extends Controller
 
         SwProductAttributeSet::create($validated);
 
-        return response()->json(['success' => true],200);
+        return response()->json(['success' => true], 200);
     }
 
-    
+
     public function update(Request $request)
-    {   
+    {
         $validated = $request->validate([
             'id' => 'required',
             'title' => 'required|max:255',
@@ -46,7 +40,7 @@ class ProductAttributeSetController extends Controller
 
         SwProductAttributeSet::where('id', $validated['id'])->update($validated);
 
-        return response()->json(['success' => true],200);
+        return response()->json(['success' => true], 200);
     }
 
     public function delete(Request $request)
@@ -61,12 +55,13 @@ class ProductAttributeSetController extends Controller
         SwProductAttributeSet::destroy($request->id);
     }
 
-    public function showAttributes(SwProductAttributeSet $productattributeset){
-        
-        return view('admin.productattributeset.attributes',['product_attribute_set_id' => $productattributeset->id]);
+    public function showAttributes(SwProductAttributeSet $productattributeset)
+    {
+
+        return view('admin.productattributeset.attributes', ['product_attribute_set_id' => $productattributeset->id]);
     }
 
-    
+
     /**
      * Show the form for creating a new resource.
      */
@@ -83,34 +78,34 @@ class ProductAttributeSetController extends Controller
 
         SwAttribute::create($validated);
 
-        return response()->json(['success' => true],200);
+        return response()->json(['success' => true], 200);
     }
 
-    
+
     public function updateAttribute(Request $request)
-    {   
+    {
         $validated = $request->validate([
             'id' => 'required',
             'title' => 'required|max:255',
         ]);
 
-        if($request->file('image'))        
+        if ($request->file('image'))
             $validated['image'] = "/attributes/" . upload_image($request->file('image'), 'images/attributes');
-        
+
         SwAttribute::where('id', $validated['id'])->update($validated);
 
-        return response()->json(['success' => true],200);
+        return response()->json(['success' => true], 200);
     }
-    
+
     public function updateAttributeImage(Request $request)
-    {   
-        
-        if($request->file('image'))        
+    {
+
+        if ($request->file('image'))
             $image = "/attributes/" . upload_image($request->file('image'), 'images/attributes');
-        
+
         SwAttribute::where('id', $request->id)->update(['image' => $image]);
 
-        return response()->json(['success' => true],200);
+        return response()->json(['success' => true], 200);
     }
 
     public function deleteAttribute(Request $request)
