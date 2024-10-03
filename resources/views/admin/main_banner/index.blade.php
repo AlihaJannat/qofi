@@ -31,7 +31,7 @@
                             <th>Sort Order</th>
                             <th>Image</th>
                             <th>Title </th>
-                            <th>Banner Text</th>
+                            <th>Banner Title</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -120,8 +120,8 @@
                         name: 'title'
                     },
                     {
-                        data: 'button_text',
-                        name: 'button_text'
+                        data: 'title',
+                        name: 'title'
                     },
                     {
                         data: 'status',

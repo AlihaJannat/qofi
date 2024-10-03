@@ -77,50 +77,64 @@
                                 <input type="submit" id="submit{{ $banner->id }}" style="display:none">
                             </form>
 
-                            <form action="{{ route('admin.main-banner.edit', $banner->id) }}" class="row g-3" method="post"
-                                enctype="multipart/form-data">
+                            <form action="{{ route('admin.main-banner.edit', $banner->id) }}" class="row g-3" method="post" enctype="multipart/form-data">
                                 @csrf
 
-                                <div class="col-12">
+                                <!-- Banner Title -->
+                                <div class="col-6">
                                     <div class="form-group">
                                         <label>Banner Title</label>
-                                        <input type="text" value="{{$banner->title}}" name="title" class="form-control">
+                                        <input type="text" value="{{ $banner->title }}" name="title" class="form-control" required>
                                     </div>
                                 </div>
+
+                                <!-- Has Button Checkbox -->
                                 <div class="col-6">
-                                    <!-- Checkbox for Has Button -->
                                     <div class="form-group">
                                         <label>Has Button</label>
                                         <div class="input-group-text">
-                                            <input type="hidden" name="has_button" value="0">
-                                            <input type="checkbox" name="has_button" value="1" {{ $banner->has_button ? 'checked' : '' }}>
+                                            <input type="hidden" name="has_button" value="0"> <!-- Hidden input for unchecked state -->
+                                            <input class="form-check-input mt-0" type="checkbox" id="hasButtonCheckbox" name="has_button" value="1" {{ $banner->has_button ? 'checked' : '' }}>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label>Button Text</label>
-                                        <input type="text" name="button_text" value="{{$banner->button_text}}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label>Button Color</label>
-                                        <input type="text" name="button_color" value="{{$banner->button_color}}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label>Button Background Color</label>
-                                        <input type="text" name="button_bg_color" value="{{$banner->button_bg_color}}" class="form-control">
-                                    </div>
-                                </div>
+
+
+                                <!-- Sort Order -->
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label>Sort Order</label>
-                                        <input type="number" name="sort_order" value="{{$banner->sort_order}}" class="form-control">
+                                        <input type="number" name="sort_order" value="{{ $banner->sort_order }}" class="form-control">
                                     </div>
                                 </div>
+
+                                <div id="buttonFields" class="row" style="display: none;">
+                                    <!-- Button Text -->
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Button Text</label>
+                                            <input type="text" name="button_text" value="{{ $banner->button_text }}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <!-- Button Color -->
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label>Button Color</label>
+                                            <input type="color" name="button_color" value="{{ $banner->button_color }}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <!-- Button Background Color -->
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label>Button Background Color</label>
+                                            <input type="color" name="button_bg_color" value="{{ $banner->button_bg_color }}" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
                                 <div class="col-12">
                                     <button type="submit" name="submitButton" class="btn btn-primary">Submit</button>
                                 </div>
@@ -171,5 +185,21 @@
             }
             return true;
         }
+
+        $(document).ready(function() {
+        function toggleButtonFields() {
+            if ($('#hasButtonCheckbox').is(':checked')) {
+                $('#buttonFields').show();
+            } else {
+                $('#buttonFields').hide();
+            }
+        }
+        toggleButtonFields();
+
+
+        $('#hasButtonCheckbox').change(function() {
+            toggleButtonFields();
+        });
+    });
     </script>
 @endsection

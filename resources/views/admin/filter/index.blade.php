@@ -134,7 +134,7 @@
                 var RowToRemove = table.row($(itSelf).parents('tr'));
                 Swal.fire({
                         title: `Are you sure you want to delete this record?`,
-                        text: "If you delete this Banner, it will be gone forever with all its instences.",
+                        text: "If you delete this Filter, it will be gone forever with all its instences.",
                         icon: "warning",
                         showCancelButton: true,
                         confirmButtonText: 'OK',

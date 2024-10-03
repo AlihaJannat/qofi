@@ -326,7 +326,7 @@ class YajraController extends Controller
                     }
                 })
                 ->addColumn('action', function ($banner) {
-                    $deleteHtml = $banner->type == 'simple' ? "<a href='javascript:;' onclick='deleteBanner(this,  $banner->id )' class='dropdown-item text-danger delete-record'>Delete</a>" : '';
+                    $deleteHtml = "<a href='javascript:;' onclick='deleteBanner(this,  $banner->id )' class='dropdown-item text-danger delete-record'>Delete</a>" ;
                     $route = route('admin.main-banner.edit', [$banner->id]);
                     $html = "<div class='d-inline-block'>
                         <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
@@ -383,7 +383,6 @@ class YajraController extends Controller
                     }
                 })
                 ->addColumn('action', function ($filter) {
-                    $deleteHtml = $filter->type == 'simple' ? "<a href='javascript:;' onclick='deleteFilter(this,  $filter->id )' class='dropdown-item text-danger delete-record'>Delete</a>" : '';
                     $route = route('admin.filter.edit', [$filter->id]);
                     $html = "<div class='d-inline-block'>
                         <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
@@ -392,7 +391,7 @@ class YajraController extends Controller
                         <div class='dropdown-menu dropdown-menu-end m-0'>
                             <a href='$route' class='dropdown-item'>View</a>
                             <div class='dropdown-divider'></div>
-                            $deleteHtml
+                           <a href='javascript:;' onclick='deleteFilter(this,  $filter->id )' class='dropdown-item text-danger delete-record'>Delete</a>
                         </div>
                     </div>";
                     return $html;

@@ -37,16 +37,16 @@
                             </div>
                         </div>
 
-                        <form action="{{ route('admin.main-banner.new') }}" class="row g-3" method="post"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('admin.main-banner.new') }}" class="row g-3" method="post" enctype="multipart/form-data">
                             @csrf
 
-                            <div class="col-12">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label>Banner Title</label>
-                                    <input type="text" name="title" class="form-control">
+                                    <input type="text" name="title" class="form-control" required>
                                 </div>
                             </div>
+
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>Has Button</label>
@@ -54,46 +54,58 @@
                                         <!-- Hidden input to submit '0' if unchecked -->
                                         <input type="hidden" name="has_button" value="0">
                                         <!-- Checkbox that submits '1' if checked -->
-                                        <input class="form-check-input mt-0" type="checkbox" aria-label="Checkbox for following text input" name="has_button" value="1">
+                                        <input class="form-check-input mt-0" type="checkbox" aria-label="Checkbox for following text input"
+                                            name="has_button" value="1" id="hasButtonCheckbox">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label>Button Texr</label>
-                                    <input type="text" name="button_text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label>Button Color</label>
-                                    <input type="text" name="button_color" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label>Button Background Color</label>
-                                    <input type="text" name="button_bg_color" class="form-control">
-                                </div>
-                            </div>
+
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>Sort Order</label>
                                     <input type="number" name="sort_order" class="form-control">
                                 </div>
                             </div>
+
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="main-image">Image<b class="text-danger">(Required)</b> (1,512 x 540)</label>
-
-                                    <input type="file" id="main-image" name="image" class="form-control"
-                                        onchange="mainImageCheck(this)" required>
+                                    <input type="file" id="main-image" name="image" class="form-control" required>
                                 </div>
                             </div>
+
+                            <!-- Start of Button Fields -->
+                            <div id="buttonFields" class="row" style="display: none;">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label>Button Text</label>
+                                        <input type="text" name="button_text" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label>Button Color</label>
+                                        <input type="color" name="button_color" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label>Button Background Color</label>
+                                        <input type="color" name="button_bg_color" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End of Button Fields -->
+
                             <div class="col-12">
                                 <button type="submit" name="submitButton" class="btn btn-primary">Submit</button>
                             </div>
                         </form>
+
+
+
                     </div>
 
                 </div>
@@ -115,5 +127,21 @@
             }
             $(input).closest('div').find('span').html(file.name)
         }
+
+        $(document).ready(function() {
+        $('#hasButtonCheckbox').change(function() {
+            if ($(this).is(':checked')) {
+                $('#buttonFields').show();
+            } else {
+                $('#buttonFields').hide();
+            }
+        });
+
+        if ($('#hasButtonCheckbox').is(':checked')) {
+            $('#buttonFields').show();
+        } else {
+            $('#buttonFields').hide();
+        }
+    });
     </script>
 @endsection
