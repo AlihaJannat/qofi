@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\SwMainBanner;
 use App\Rules\SvgFile;
+
 class MainBannerController extends Controller
 {
     public function index()
@@ -18,20 +19,20 @@ class MainBannerController extends Controller
     {
         if ($request->isMethod('POST')) {
             $request->validate([
-            'title' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
-            'has_button' => 'required|boolean',
-            'button_color' => 'nullable|string|max:255',
-            'button_bg_color' => 'nullable|string|max:255',
-            'button_text' => 'nullable|string',
-            'sort_order' => 'required|integer'
+                'title' => 'required|string',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
+                'button_color' => 'nullable|string|max:255',
+                'button_bg_color' => 'nullable|string|max:255',
+                'button_text' => 'nullable|string',
+                'sort_order' => 'required|integer'
 
             ]);
+            $has_button =  ($request->has('has_button') ? 1 : 0);
             $banner = new SwMainBanner();
             $banner->image = "/main_banner/" . upload_image($request->file('image'), 'images/main_banner');
             $banner->title = $request->title;
-            $banner->has_button = $request->has_button;
-            if ($request->has_button) {
+            $banner->has_button = $has_button;
+            if ($has_button) {
                 $banner->button_color = $request->button_color;
                 $banner->button_bg_color = $request->button_bg_color;
                 $banner->button_text = $request->button_text;
@@ -54,24 +55,25 @@ class MainBannerController extends Controller
         if ($request->isMethod('POST')) {
             $request->validate([
                 'title' => 'required|string',
-                'has_button' => 'required|boolean',
                 'button_color' => 'nullable|string|max:255',
                 'button_bg_color' => 'nullable|string|max:255',
                 'button_text' => 'nullable|string',
                 'sort_order' => 'required|integer'
 
             ]);
+
+            $has_button =  ($request->has('has_button') ? 1 : 0);
             $banner->title = $request->title;
-            $banner->has_button = $request->has_button;
-                if ($request->has_button) {
-                    $banner->button_color = $request->button_color;
-                    $banner->button_bg_color = $request->button_bg_color;
-                    $banner->button_text = $request->button_text;
-                } else {
-                    $banner->button_color = null;
-                    $banner->button_bg_color = null;
-                    $banner->button_text = null;
-                }
+            $banner->has_button = $has_button;
+            if ($has_button) {
+                $banner->button_color = $request->button_color;
+                $banner->button_bg_color = $request->button_bg_color;
+                $banner->button_text = $request->button_text;
+            } else {
+                $banner->button_color = null;
+                $banner->button_bg_color = null;
+                $banner->button_text = null;
+            }
             $banner->sort_order = $request->sort_order;
             $banner->save();
 
@@ -102,7 +104,6 @@ class MainBannerController extends Controller
     public function delete(Request $request)
     {
         SwMainBanner::destroy($request->id);
-
     }
 
     public function changeStatus(Request $request)
