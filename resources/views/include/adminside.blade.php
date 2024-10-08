@@ -1,3 +1,9 @@
+<style>
+    li {
+        list-style: none
+    }
+</style>
+
 @php
 $superAdmin = auth('admin')->user()->id == 1;
 @endphp
@@ -34,6 +40,7 @@ $superAdmin = auth('admin')->user()->id == 1;
         $customerView =
         auth('admin')->user()->roleRel?->permissions->contains('name', 'customer_view') || $superAdmin;
         $vendorView = auth('admin')->user()->roleRel?->permissions->contains('name', 'vendor_view') || $superAdmin;
+        $cmsView = true;
         @endphp
         @if ($superAdmin || $customerView || $vendorView)
         <li
@@ -72,7 +79,6 @@ $superAdmin = auth('admin')->user()->id == 1;
         @php
         $bannerView = auth('admin')->user()->roleRel?->permissions->contains('name', 'banner_view') || $superAdmin;
         @endphp
-
         @if ($bannerView)
         <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.banner.') ? 'active' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -100,78 +106,117 @@ $superAdmin = auth('admin')->user()->id == 1;
         @endif
 
 
+
+        <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.product') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons fa fa-cubes"></i>
+                <div data-i18n="Ecommerce">Ecommerce</div>
+            </a>
+            <ul class="menu-sub">
+                @php
+                $filterView = auth('admin')->user()->roleRel?->permissions->contains('name', 'filter_view') ||
+                $superAdmin;
+                @endphp
+                @if ($filterView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.filter.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
+                    <a href="{{ route('admin.filter.index') }}" class="menu-link">
+                        <div data-i18n="Filters">Filters</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $colorView = auth('admin')->user()->roleRel?->permissions->contains('name', 'color_view') ||
+                $superAdmin;
+                @endphp
+                @if ($colorView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.color.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
+                    <a href="{{ route('admin.color.index') }}" class="menu-link">
+                        <div data-i18n="Colors">Colors</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $heightView = auth('admin')->user()->roleRel?->permissions->contains('name', 'height_view') ||
+                $superAdmin;
+                @endphp
+                @if ($heightView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.height.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
+                    <a href="{{ route('admin.height.index') }}" class="menu-link">
+                        <div data-i18n="Height Units">Height Units</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $productAttributeSetView = auth('admin')->user()->roleRel?->permissions->contains('name',
+                'attribute_view') ||
+                $superAdmin;
+                @endphp
+                @if ($productAttributeSetView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productattributeset.') && !Str::startsWith(Route::currentRouteName(), 'admin.productattributeset') ? 'active' : '' }}">
+                    <a href="{{ route('admin.productattributeset.index') }}" class="menu-link">
+                        <div data-i18n="Product Attribute Set">Product Attribute Set</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $productOriginView = auth('admin')->user()->roleRel?->permissions->contains('name', 'origin_view') ||
+                $superAdmin;
+                @endphp
+                @if ($productOriginView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productorigin.') && !Str::startsWith(Route::currentRouteName(), 'admin.productorigin') ? 'active' : '' }}">
+                    <a href="{{ route('admin.productorigin.index') }}" class="menu-link">
+                        <div data-i18n="Product Origin">Product Origin</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $productAddonView = auth('admin')->user()->roleRel?->permissions->contains('name', 'addons_view') ||
+                $superAdmin;
+                @endphp
+                @if ($productAddonView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productaddon.') && !Str::startsWith(Route::currentRouteName(), 'admin.productorigin') ? 'active' : '' }}">
+                    <a href="{{ route('admin.productaddon.index') }}" class="menu-link">
+                        <div data-i18n="Product Addon">Product Addons</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $categoryView = auth('admin')->user()->roleRel?->permissions->contains('name', 'category_view') ||
+                $superAdmin;
+                @endphp
+                @if ($categoryView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.category.') ? 'active' : '' }}">
+                    <a href="{{ route('admin.category.index') }}" class="menu-link">
+                        <div data-i18n="Product Category">Product Category</div>
+                    </a>
+                </li>
+                @endif
+                @php
+                $shopView = auth('admin')->user()->roleRel?->permissions->contains('name', 'shop_view') || $superAdmin;
+                @endphp
+                @if ($shopView)
+                <li
+                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.shop.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
+                    <a href="{{ route('admin.shop.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-store"></i>
+                        <div data-i18n="Shops">Shops</div>
+                    </a>
+                </li>
+                @endif
+            </ul>
+        </li>
+
         @php
-        $categoryView =
-        auth('admin')->user()->roleRel?->permissions->contains('name', 'category_view') || $superAdmin;
-        $shopView = auth('admin')->user()->roleRel?->permissions->contains('name', 'shop_view') || $superAdmin;
-        $colorView = auth('admin')->user()->roleRel?->permissions->contains('name', 'color_view') || $superAdmin;
-        $filterView = auth('admin')->user()->roleRel?->permissions->contains('name', 'filter_view') || $superAdmin;
-        $heightView = auth('admin')->user()->roleRel?->permissions->contains('name', 'height_view') || $superAdmin;
-        $productAttributeSetView = auth('admin')->user()->roleRel?->permissions->contains('name', 'attribute_view') ||
-        $superAdmin;
-        $calendarView =
-        auth('admin')->user()->roleRel?->permissions->contains('name', 'calendar_view') || $superAdmin;
-        $productOriginView =
-        auth('admin')->user()->roleRel?->permissions->contains('name', 'origin_view') || $superAdmin;
+        $cmsView = true;
         @endphp
-
-        @if ($filterView)
-        <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.filter.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
-            <a href="{{ route('admin.filter.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons fa fa-filter"></i>
-                <div data-i18n="Filters">Filters</div>
-            </a>
-        </li>
-        @endif
-        @if ($shopView)
-        <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.shop.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
-            <a href="{{ route('admin.shop.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-store"></i>
-                <div data-i18n="Shops">Shops</div>
-            </a>
-        </li>
-        @endif
-        @if ($colorView)
-        <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.color.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
-            <a href="{{ route('admin.color.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons fa fa-palette"></i>
-                <div data-i18n="Colors">Colors</div>
-            </a>
-        </li>
-        @endif
-
-
-        @if ($heightView)
-        <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.height.') && !Str::startsWith(Route::currentRouteName(), 'admin.shop.category') ? 'active' : '' }}">
-            <a href="{{ route('admin.height.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons fa fa-balance-scale"></i>
-                <div data-i18n="Height Units">Height Units</div>
-            </a>
-        </li>
-        @endif
-        @if ($productAttributeSetView)
-        <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productattributeset.') && !Str::startsWith(Route::currentRouteName(), 'admin.productattributeset') ? 'active' : '' }}">
-            <a href="{{ route('admin.productattributeset.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons fa fa-balance-scale"></i>
-                <div data-i18n="Product Attribute Set">Product Attribute Set</div>
-            </a>
-        </li>
-        @endif
-        @if ($productOriginView)
-        <li
-            class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.productorigin.') && !Str::startsWith(Route::currentRouteName(), 'admin.productorigin') ? 'active' : '' }}">
-            <a href="{{ route('admin.productorigin.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons fa fa-globe"></i>
-                <div data-i18n="Product Origin">Product Origin</div>
-            </a>
-        </li>
-        @endif
-        @if ($categoryView)
+        @if ($cmsView)
         <li class="menu-item {{ Str::contains(Route::currentRouteName(), 'admin.cms.') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-home"></i>
@@ -206,28 +251,10 @@ $superAdmin = auth('admin')->user()->id == 1;
             </ul>
         </li>
         @endif
-        @if ($categoryView)
-        <li class="menu-item {{ Str::contains(Route::currentRouteName(), 'admin.category.') ? 'active open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons fa fa-cubes"></i>
-                <div data-i18n="Categories">Categories</div>
-            </a>
-            <ul class="menu-sub">
-                {{-- <li
-                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.shop.category.') ? 'active' : '' }}">
-                    <a href="{{ route('admin.shop.category.index') }}" class="menu-link">
-                        <div data-i18n="Shop Category">Shop Category</div>
-                    </a>
-                </li> --}}
-                <li
-                    class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.category.') ? 'active' : '' }}">
-                    <a href="{{ route('admin.category.index') }}" class="menu-link">
-                        <div data-i18n="Product Category">Product Category</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        @endif
+
+        @php
+        $calendarView = auth('admin')->user()->roleRel?->permissions->contains('name', 'calendar_view') || $superAdmin;
+        @endphp
         @if ($calendarView)
         <li class="menu-item {{ Str::contains(Route::currentRouteName(), 'admin.calendar.') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -268,7 +295,6 @@ $superAdmin = auth('admin')->user()->id == 1;
         $orderView = auth('admin')->user()->roleRel?->permissions->contains('name', 'order_view') ||
         $superAdmin;
         @endphp
-
         @if ($orderView)
         <li class="menu-item {{ Str::startsWith(Route::currentRouteName(), 'admin.order.') ? 'active' : '' }}">
             <a href="{{ route('admin.order.index') }}" class="menu-link">
@@ -278,11 +304,11 @@ $superAdmin = auth('admin')->user()->id == 1;
         </li>
         @endif
 
+
         @php
         $subscriptionView = auth('admin')->user()->roleRel?->permissions->contains('name', 'subscription_view') ||
         $superAdmin;
         @endphp
-
 
         @if ($subscriptionView)
         <li class="menu-item {{ Str::contains(Route::currentRouteName(), 'admin.plan.') ? 'active open' : '' }}">

@@ -12,6 +12,7 @@ use App\Models\SwFilter;
 use App\Models\SwMainBanner;
 use App\Models\SwOrder;
 use App\Models\SwProduct;
+use App\Models\SwProductAddon;
 use App\Models\SwProductAttributeSet;
 use App\Models\SwProductOrigin;
 use App\Models\SwRole;
@@ -326,7 +327,7 @@ class YajraController extends Controller
                     }
                 })
                 ->addColumn('action', function ($banner) {
-                    $deleteHtml = "<a href='javascript:;' onclick='deleteBanner(this,  $banner->id )' class='dropdown-item text-danger delete-record'>Delete</a>" ;
+                    $deleteHtml = "<a href='javascript:;' onclick='deleteBanner(this,  $banner->id )' class='dropdown-item text-danger delete-record'>Delete</a>";
                     $route = route('admin.main-banner.edit', [$banner->id]);
                     $html = "<div class='d-inline-block'>
                         <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
@@ -814,29 +815,14 @@ class YajraController extends Controller
         }
         $canEdit = $request->canEdit;
         $canDelete = $request->canDelete;
-        $subscriptions = SwSubscription::with('shops');
-        // dd($subscriptions->get()[0]->shops['pivot_order_count']);
-
+        $subscriptions = SwSubscription::query();
 
         return DataTables::of($subscriptions)
             ->rawColumns(['status', 'action', 'shop', 'duration'])
             ->addColumn('duration', function ($subscription) {
                 return convertDaysToMonths($subscription->duration);
             })
-            ->addColumn('shop', function ($subscription) {
-                $shops = $subscription->shops->map(function ($shop) {
-                    return [
-                        'name' => $shop->name,
-                        'order_count' => $shop->pivot->order_count, // Accessing 'order_count' from the pivot table
-                    ];
-                });
-                $duration = json_encode(convertDaysToMonths($subscription->duration));
-                $count = count($subscription->subscriber);
-                $route = url('admin/plan/subscriber?sub=' . $subscription->name);
-                $html = "<button class='btn btn-primary' onclick='showShops($shops,$duration)' >View Shops</button><br>";
-                $html .= ($count > 0) ? "<a href='$route' class='btn btn-info mt-1'  >Subscriber $count </a>" : "";
-                return $html;
-            })
+
             ->addColumn('status', function ($subscription) {
                 $click = "onclick='statusChange(this,  $subscription->id )'";
                 if ($subscription->status) {
@@ -873,6 +859,74 @@ class YajraController extends Controller
             })
             ->make(true);
     }
+    // public function subscriptionDataOld(Request $request)
+    // {
+    //     if (!$request->ajax()) {
+    //         return response()->json([
+    //             'message' => 'Bad Request, Something wrong with url'
+    //         ], 400);
+    //     }
+    //     $canEdit = $request->canEdit;
+    //     $canDelete = $request->canDelete;
+    //     $subscriptions = SwSubscription::with('shops');
+    //     // dd($subscriptions->get()[0]->shops['pivot_order_count']);
+
+
+    //     return DataTables::of($subscriptions)
+    //         ->rawColumns(['status', 'action', 'shop', 'duration'])
+    //         ->addColumn('duration', function ($subscription) {
+    //             return convertDaysToMonths($subscription->duration);
+    //         })
+    //         ->addColumn('shop', function ($subscription) {
+    //             $shops = $subscription->shops->map(function ($shop) {
+    //                 return [
+    //                     'name' => $shop->name,
+    //                     'order_count' => $shop->pivot->order_count, // Accessing 'order_count' from the pivot table
+    //                 ];
+    //             });
+    //             $duration = json_encode(convertDaysToMonths($subscription->duration));
+    //             $count = count($subscription->subscriber);
+    //             $route = url('admin/plan/subscriber?sub=' . $subscription->name);
+    //             $html = "<button class='btn btn-primary' onclick='showShops($shops,$duration)' >View Shops</button><br>";
+    //             $html .= ($count > 0) ? "<a href='$route' class='btn btn-info mt-1'  >Subscriber $count </a>" : "";
+    //             return $html;
+    //         })
+    //         ->addColumn('status', function ($subscription) {
+    //             $click = "onclick='statusChange(this,  $subscription->id )'";
+    //             if ($subscription->status) {
+    //                 return "<button class='btn btn-success active'
+    //                                         $click>Active</button>";
+    //             } else {
+    //                 return "<button class='btn btn-warning block'
+    //                                         $click>Block</button>";
+    //             }
+    //         })
+    //         ->addColumn('action', function ($subscription) use ($canEdit, $canDelete) {
+    //             if (!$subscription->sw_shop_id) {
+    //                 $editLink = '';
+    //                 $deleteLink = '';
+    //                 if ($canEdit) {
+    //                     $editLink = "<a href='javascript:;'onclick='editSubscription($subscription, $subscription->id )' class='dropdown-item'>Edit</a>";
+    //                 }
+    //                 if ($canDelete) {
+    //                     $deleteLink = "<a href='javascript:;' onclick='deleteSubscription(this,  $subscription->id )' class='dropdown-item text-danger delete-record'>Delete</a>";
+    //                 }
+    //                 $html = "<div class='d-inline-block'>
+    //                     <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
+    //                         <i class='bx bx-dots-vertical-rounded'></i>
+    //                     </a>
+    //                     <div class='dropdown-menu dropdown-menu-end m-0'>
+    //                         $editLink
+    //                         <div class='dropdown-divider'></div>
+    //                         $deleteLink
+    //                     </div>
+    //                 </div>";
+    //                 return $html;
+    //             }
+    //             return '';
+    //         })
+    //         ->make(true);
+    // }
 
     public function subscriberData(Request $request)
     {
@@ -992,6 +1046,55 @@ class YajraController extends Controller
                 }
                 if ($canDelete) {
                     $deleteLink = "<a href='javascript:;' onclick='deleteProductOrigin(this,  $origin->id )' class='dropdown-item text-danger delete-record'>Delete</a>";
+                }
+                $html = "<div class='d-inline-block'>
+                        <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>
+                            <i class='bx bx-dots-vertical-rounded'></i>
+                        </a>
+                        <div class='dropdown-menu dropdown-menu-end m-0'>
+                            $editLink
+                            <div class='dropdown-divider'></div>
+                            $deleteLink
+                        </div>
+                    </div>";
+                return $html;
+            })
+            ->make(true);
+    }
+    public function productAddonData(Request $request)
+    {
+        if (!$request->ajax()) {
+            return response()->json([
+                'message' => 'Bad Request, Something wrong with url'
+            ], 400);
+        }
+        $canEdit = $request->canEdit;
+        $canDelete = $request->canDelete;
+        $addons = SwProductAddon::query();
+
+        return DataTables::of($addons)
+            ->rawColumns(['status', 'has_price', 'action',])
+            ->addColumn('status', function ($addon) {
+                $click = "onclick='statusChange(this,  $addon->id )'";
+                if ($addon->status) {
+                    return "<button class='btn btn-success active'
+                                            $click>Active</button>";
+                } else {
+                    return "<button class='btn btn-warning block'
+                                            $click>Block</button>";
+                }
+            })
+            ->addColumn('has_price', function ($addon) {
+                return ($addon->has_price ? "Yes" :   "No");
+            })
+            ->addColumn('action', function ($addon) use ($canEdit, $canDelete) {
+                $editLink = '';
+                $deleteLink = '';
+                if ($canEdit) {
+                    $editLink = "<a href='javascript:;'onclick='editProductAddon($addon, $addon->id )' class='dropdown-item'>Edit</a>";
+                }
+                if ($canDelete) {
+                    $deleteLink = "<a href='javascript:;' onclick='deleteProductAddon(this,  $addon->id )' class='dropdown-item text-danger delete-record'>Delete</a>";
                 }
                 $html = "<div class='d-inline-block'>
                         <a href='javascript:;' class='btn btn-sm btn-icon dropdown-toggle hide-arrow' data-bs-toggle='dropdown'>

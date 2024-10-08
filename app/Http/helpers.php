@@ -175,6 +175,11 @@ function calculateCharges($cart)
 }
 
 
+/**
+ * Undocumented function
+ *
+ * @return void
+ */
 function getCurrentDateTimeInfo()
 {
     // Get the current date in DD-MM-YYYY format
@@ -194,6 +199,12 @@ function getCurrentDateTimeInfo()
     ];
 }
 
+/**
+ * Undocumented function
+ *
+ * @param [type] $cart
+ * @return void
+ */
 function getCartProducts($cart)
 {
     $products = [];

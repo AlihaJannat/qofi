@@ -6,6 +6,17 @@ $canCreate = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
 $canEdit = auth('admin')->user()->roleRel?->permissions->contains('name', 'subscription_edit') || $superAdmin;
 $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'subscription_delete') || $superAdmin;
 @endphp
+<style>
+    .select2-container {
+        z-index: 9999 !important;
+    }
+
+    .modal-body {
+        overflow-y: auto;
+        max-height: 120vh;
+        /* Adjust based on your design */
+    }
+</style>
 
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="card">
@@ -32,24 +43,20 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Short Description</th>
-                        <th>Long Description</th>
+                        <th>Description</th>
                         <th>Duration</th>
                         <th>Price</th>
-                        <th>Shops</th>
-                        <th>Cups</th>
-                        <th>Coffee Type</th>
+                        <th>Shop</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-
             </table>
         </div>
     </div>
 </div>
 
-{{-- <div class="modal fade" id="subscriptionModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="subscriptionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered1 modal-simple modal-add-new-cc">
         <div class="modal-content p-3 p-md-5">
             <div class="modal-body">
@@ -80,7 +87,25 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                         <input type="text" class="form-control" name="price" id="price" required />
                     </div>
 
-
+                    <div class="mb-3">
+                        <label>Shops</label>
+                        <select name="shop_id[]" id="shops" onchange="addCount(this)" class="form-select shop-select"
+                            multiple="multiple">
+                            @foreach ($shops as $shop)
+                            <option value="{{ $shop->id }}" data-name="{{$shop->name}}">
+                                {{ $shop->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Dynamic counts for each shop -->
+                    <div id="shop-counts" class="mb-3">
+                        <!-- Shop counts will be dynamically inserted here -->
+                    </div>
+                    <!-- Error message display -->
+                    <div id="error-message" class="text-danger mb-3" style="display: none;">
+                        <p id="error-text"></p>
+                    </div>
 
                     <button class="btn btn-primary me-sm-3 me-1 data-submit">Add</button>
                     <button type="reset" class="btn btn-label-secondary btn-reset" data-bs-dismiss="modal"
@@ -89,72 +114,29 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
             </div>
         </div>
     </div>
-</div> --}}
+</div>
 
-{{-- add subscription modal --}}
-<div class="modal fade" id="subscriptionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered1 modal-simple modal-add-new-cc">
-        <div class="modal-content p-3 p-md-5">
-            <div class="modal-body">
+{{-- show shops modal --}}
+<div class="modal fade" id="shopsModal" tabindex="-1" aria-labelledby="shopsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shopsModalLabel">Shops</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="text-center mb-4">
-                    <h3>Add Subscription</h3>
-                </div>
-
-                <form class="add-new-subscription pt-0" onsubmit="addSubscription(event, this)"
-                    action="{{ route('admin.plan.subscription.add') }}">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <input type="text" class="form-control" name="name" id="name" required />
-                    </div>
-
-                    <!-- Updated Description (Short Description) -->
-                    <div class="mb-3">
-                        <label class="form-label">Short Description <small>(optional)</small></label>
-                        <textarea class="form-control" name="short_description" id="short_description" cols="30"
-                            rows="3"></textarea>
-                    </div>
-
-                    <!-- New Long Description Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Long Description <small>(optional)</small></label>
-                        <textarea class="form-control" name="long_description" id="long_description" cols="30"
-                            rows="5"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Duration (In Days)</label>
-                        <input type="number" class="form-control" name="duration" id="duration" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Price (In {{app_setting('site_currency')}})</label>
-                        <input type="text" class="form-control" name="price" id="price" required />
-                    </div>
-
-                    <!-- New Shops Count Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Shops Count</label>
-                        <input type="number" class="form-control" name="shops_count" id="shops_count" required />
-                    </div>
-
-                    <!-- New Cups Count Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Cups Count</label>
-                        <input type="number" class="form-control" name="cups_count" id="cups_count" required />
-                    </div>
-
-                    <!-- New Coffee Type Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Coffee Type (e.g. 4, 4-5, 6-8)</label>
-                        <input type="text" class="form-control" name="coffee_type" id="coffee_type" required />
-                    </div>
-
-                    <button class="btn btn-primary me-sm-3 me-1 data-submit">Add</button>
-                    <button type="reset" class="btn btn-label-secondary btn-reset" data-bs-dismiss="modal"
-                        aria-label="Close">Cancel</button>
-                </form>
+            </div>
+            <div class="modal-body">
+                <!-- Shops table will be inserted here -->
+                <table id="shopsTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Shop Name</th>
+                            <th>Order Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic shop rows will be inserted here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -163,76 +145,6 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
 
 {{-- edit subscription --}}
 <div class="modal fade" id="editSubscriptionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered1 modal-simple modal-add-new-cc">
-        <div class="modal-content p-3 p-md-5">
-            <div class="modal-body">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="text-center mb-4">
-                    <h3>Edit Subscription</h3>
-                </div>
-
-                <form class="add-new-subscription pt-0" onsubmit="updateSubscription(event, this)"
-                    action="{{ route('admin.plan.subscription.update') }}">
-                    @csrf
-                    <input type="hidden" name="id" id="edit-id">
-
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <input type="text" class="form-control" name="name" id="edit-name" required />
-                    </div>
-
-                    <!-- Updated Description (Short Description) -->
-                    <div class="mb-3">
-                        <label class="form-label">Short Description <small>(optional)</small></label>
-                        <textarea class="form-control" name="short_description" id="edit-short-description" cols="30"
-                            rows="3"></textarea>
-                    </div>
-
-                    <!-- New Long Description Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Long Description <small>(optional)</small></label>
-                        <textarea class="form-control" name="long_description" id="edit-long-description" cols="30"
-                            rows="5"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Duration (In Days)</label>
-                        <input type="number" class="form-control" name="duration" id="edit-duration" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Price (In {{ app_setting('site_currency') }})</label>
-                        <input type="text" class="form-control" name="price" id="edit-price" required />
-                    </div>
-
-                    <!-- New Shops Count Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Shops Count</label>
-                        <input type="number" class="form-control" name="shops_count" id="edit-shops-count" required />
-                    </div>
-
-                    <!-- New Cups Count Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Cups Count</label>
-                        <input type="number" class="form-control" name="cups_count" id="edit-cups-count" required />
-                    </div>
-
-                    <!-- New Coffee Type Field -->
-                    <div class="mb-3">
-                        <label class="form-label">Coffee Type (e.g. 4, 4-5, 6-8)</label>
-                        <input type="text" class="form-control" name="coffee_type" id="edit-coffee-type" required />
-                    </div>
-
-                    <button class="btn btn-primary me-sm-3 me-1 data-submit">Update</button>
-                    <button type="reset" class="btn btn-label-secondary btn-reset" data-bs-dismiss="modal"
-                        aria-label="Close">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- <div class="modal fade" id="editSubscriptionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered1 modal-simple modal-add-new-cc">
         <div class="modal-content p-3 p-md-5">
             <div class="modal-body">
@@ -261,6 +173,21 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                         <label class="form-label">Price (In {{app_setting('site_currency')}})</label>
                         <input type="text" class="form-control" name="price" id="edit-price" required />
                     </div>
+                    <div class="mb-3">
+                        <label>Shops</label>
+                        <select name="shop_id[]" id="edit-shop" class="form-select shop-select-edit" multiple
+                            onchange="updateShopCounts()">
+                            @foreach ($shops as $shop)
+                            <option value="{{ $shop->id }}" data-name="{{$shop->name}}">
+                                {{ $shop->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Dynamic counts for each shop -->
+                    <div id="edit-shop-counts" class="mb-3">
+                        <!-- Shop counts will be dynamically inserted here -->
+                    </div>
                     <button class="btn btn-primary me-sm-3 me-1 data-submit">Add</button>
                     <button type="reset" class="btn btn-label-secondary btn-reset" data-bs-dismiss="modal"
                         aria-label="Close">Cancel</button>
@@ -268,12 +195,25 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
             </div>
         </div>
     </div>
-</div> --}}
+</div>
 @endsection
 
 @section('script')
 <script>
-    @if ($canEdit)
+    $('#subscriptionModal').on('shown.bs.modal', function () {
+            $('.shop-select').select2({
+                placeholder: "Select Shops",
+                width: '100%'
+            });
+        });
+        $('#editSubscriptionModal').on('shown.bs.modal', function () {
+            $('.shop-select-edit').select2({
+                dropdownParent: $('#editSubscriptionModal'),
+                width: '100%' // Adjust based on your layout
+            });
+        });
+
+        @if ($canEdit)
             //changing the status
             function statusChange(itSelf, id) {
                 var button = $(itSelf);
@@ -338,11 +278,12 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                     })
                 }
             }
-    @endif
+        @endif
 
         var deleteSubscription
         var addSubscription
         var editSubscription
+        var showShops
         $(document).ready(function() {
             var table = $('#subscriptionTable').DataTable({
                 processing: true,
@@ -361,12 +302,8 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                         name: 'name',
                     },
                     {
-                        data: 'short_description', // Updated from 'description' to 'short_description'
-                        name: 'short_description',
-                    },
-                    {
-                        data: 'long_description', // Added long description column
-                        name: 'long_description',
+                        data: 'description',
+                        name: 'description',
                     },
                     {
                         data: 'duration',
@@ -376,21 +313,13 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                         data: 'price',
                         name: 'price',
                         render: function(data) {
-                            html = `{{app_setting('site_currency')}} ` + data;
-                            return html;
+                            html = `{{app_setting('site_currency')}} `+data
+                            return html
                         },
                     },
                     {
-                        data: 'shops_count', // Added shops count column
-                        name: 'shops_count',
-                    },
-                    {
-                        data: 'cups_count', // Added cups count column
-                        name: 'cups_count',
-                    },
-                    {
-                        data: 'coffee_type', // Added coffee type column
-                        name: 'coffee_type',
+                        data: 'shop',
+                        name: 'shop',
                     },
                     {
                         data: 'status',
@@ -400,11 +329,28 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                     {
                         data: 'action',
                         name: 'action',
-                        searchable: false,
+                        searchable: false
                     },
                 ]
-
             })
+
+            showShops = function(shops,duration){
+                const tableBody = $('#shopsTable tbody');
+                    tableBody.empty(); // Clear existing rows
+
+                    // Populate table with shop data
+                    shops.forEach(shop => {
+                        tableBody.append(`
+                            <tr>
+                                <td>${shop.name}</td>
+                                <td>${shop.order_count} / ${duration}</td> 
+                            </tr>
+                        `);
+                    });
+                    // Show the modal
+                    $('#shopsModal').modal('show');
+            }
+
             $('#statusFilter').on('change', function() {
                 table.ajax.reload(); // Reload the DataTable when the select field changes
             });
@@ -441,30 +387,28 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
             }
 
             editSubscription = function(sub, id) {
-                let name = sub.name;
-                let shortDescription = sub.short_description;
-                let longDescription = sub.long_description;
-                let duration = sub.duration;
-                let price = sub.price;
-                let shopsCount = sub.shops_count;
-                let cupsCount = sub.cups_count;
-                let coffeeType = sub.coffee_type;
+                name = sub.name
+                description = sub.description
+                duration = sub.duration
+                price = sub.price
+                shops = sub.shops.map(shop => shop.id); 
+                shopCounts = sub.shops.reduce((acc, shop) => {
+                    acc[shop.id] = shop.pivot.order_count; 
+                    return acc;
+                }, {});
+                
 
-                // Set values to the form fields
-                $('#edit-id').val(id);
-                $('#edit-name').val(name);
-                $('#edit-short-description').val(shortDescription); 
-                $('#edit-long-description').val(longDescription); 
-                $('#edit-duration').val(duration);
-                $('#edit-price').val(price);
-                $('#edit-shops-count').val(shopsCount); 
-                $('#edit-cups-count').val(cupsCount); 
-                $('#edit-coffee-type').val(coffeeType); 
+                $('#edit-id').val(id)
+                $('#edit-name').val(name)
+                $('#edit-description').val(description)
+                $('#edit-duration').val(duration)
+                $('#edit-price').val(price)
+                $('#edit-shop').val(shops).trigger('change');
 
-                // Show the modal
-                $('#editSubscriptionModal').modal('show');
+                updateShopCounts(shopCounts);
+
+                $('#editSubscriptionModal').modal('show')
             }
-
 
             updateSubscription = function(e, form) {
                 e.preventDefault();
@@ -523,10 +467,85 @@ $canDelete = auth('admin')->user()->roleRel?->permissions->contains('name', 'sub
                     })
             }
 
+            $('.shop-select').select2({
+                placeholder: "Select Shops",
+                dropdownParent: $('#subscriptionModal')
+            });
+            $('.shop-select-edit').select2({
+                placeholder: "Select Shops",
+                dropdownParent: $('#editSubscriptionModal')
+            });
             
         });
 </script>
 
+
+<script>
+    function addCount(selectElement) {
+        const selectedOptions = Array.from(selectElement.selectedOptions);
+        const shopCountsDiv = document.getElementById('shop-counts');
+        const duration = parseInt(document.getElementById('duration').value) || 0; // Get the subscription duration
+        const errorMessageDiv = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const orderPerDay = {{config('constant.ORDERPERDAY')}};
+
+        shopCountsDiv.innerHTML = ''; // Clear existing counts
+
+        selectedOptions.forEach(option => {
+            const shopId = option.value;
+            const shopName = option.getAttribute('data-name'); // Ensure option is an HTMLOptionElement
+            
+            const countField = document.createElement('div');
+            countField.classList.add('mb-3');
+            
+            countField.innerHTML = `
+                <label for="count-${shopId}">Count for Shop ${shopName}</label>
+                <input type="number" name="shop_counts[${shopId}]" id="count-${shopId}" class="form-control" min="0">
+            `;
+            
+            shopCountsDiv.appendChild(countField);
+        });
+
+        // Add validation for total counts if needed
+        document.querySelectorAll('input[name^="shop_counts"]').forEach(input => {
+            input.addEventListener('input', () => {
+                const totalCount = Array.from(document.querySelectorAll('input[name^="shop_counts"]'))
+                                        .reduce((sum, input) => sum + parseInt(input.value) || 0, 0);
+                
+                if (totalCount > (duration * orderPerDay)) {
+                    errorText.textContent = 'The total count exceeds the duration in days.';
+                    errorMessageDiv.style.display = 'block';
+                    input.value = ''; // Optionally clear the input or handle as needed
+                } else {
+                    errorMessageDiv.style.display = 'none'; // Hide error message if valid
+                }
+            });
+        });
+    }
+
+    function updateShopCounts(shopCounts = {}) {
+        const selectedShops = Array.from(document.getElementById('edit-shop').selectedOptions).map(option => ({
+            id: option.value,
+            name: option.getAttribute('data-name')
+        }));
+        
+        const shopCountsDiv = document.getElementById('edit-shop-counts');
+        shopCountsDiv.innerHTML = ''; // Clear existing counts
+
+        selectedShops.forEach(shop => {
+            const countField = document.createElement('div');
+            countField.classList.add('mb-3');
+            
+            countField.innerHTML = `
+                <label for="count-${shop.id}">Count for ${shop.name}</label>
+                <input type="number" name="shop_counts[${shop.id}]" id="count-${shop.id}" class="form-control" min="0" value="${shopCounts[shop.id] || ''}">
+            `;
+            
+            shopCountsDiv.appendChild(countField);
+        });
+    }
+
+</script>
 
 
 @endsection

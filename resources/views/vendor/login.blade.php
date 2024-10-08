@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 
-<html lang="en" class="light-style  customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="{{asset('admindic')}}/" data-template="vertical-menu-template">
+<html lang="en" class="light-style  customizer-hide" dir="ltr" data-theme="theme-default"
+    data-assets-path="{{asset('admindic')}}/" data-template="vertical-menu-template">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>{{ app_setting('site_name') }} | Admin Login</title>
+    <title>{{ app_setting('site_name') }} | Vendor Login</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon"
@@ -26,7 +28,8 @@
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{asset('admindic/vendor/css/rtl/core.css')}}" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="{{asset('admindic/vendor/css/rtl/theme-default.css')}}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{asset('admindic/vendor/css/rtl/theme-default.css')}}"
+        class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{asset('admindic/css/demo.css')}}" />
 
     <!-- Vendors CSS -->
@@ -63,7 +66,8 @@
                     <div class="app-brand mb-4">
                         <a href="#" class="app-brand-link gap-2 mb-2">
                             <span class="app-brand-logo demo">
-                                <img src="{{ app_setting('site_logo') }}" alt="logo" height="26px" width="26px" class="logo">
+                                <img src="{{ app_setting('site_logo') }}" alt="logo" height="26px" width="26px"
+                                    class="logo">
 
                             </span>
                             <span class="app-brand-text demo h3 mb-0 fw-bold">{{ app_setting('site_name') }}</span>
@@ -87,7 +91,7 @@
                             <div class="input-group input-group-merge">
                                 <input type="password" id="password" class="form-control" name="password"
                                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                    aria-describedby="password" required/>
+                                    aria-describedby="password" required />
                             </div>
                         </div>
                         <span id="login-response"></span>

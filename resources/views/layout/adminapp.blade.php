@@ -57,7 +57,7 @@
     <link rel="stylesheet" href="{{ asset('admindic/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}">
     <link rel="stylesheet" href="{{ asset('admindic/vendor/libs/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('admindic/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
-    
+
     <link rel="stylesheet" href="{{ asset('admindic/vendor/libs/sweetalert2/sweetalert2.css') }}" />
 
     <link rel="stylesheet" href="{{ asset('admindic/vendor/libs/leaflet/leaflet.css') }}" />
@@ -70,6 +70,9 @@
     <script src="{{ asset('admindic/vendor/js/template-customizer.js') }}"></script>
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('admindic/js/config.js') }}"></script>
+
+
+
     <style>
         .layout-menu-toggle .menu-toggle-icon::before {
             content: "" !important;
@@ -85,7 +88,7 @@
             right: 10px;
             z-index: 1000;
             display: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .chatbot-container iframe {
@@ -108,7 +111,7 @@
             border-radius: 50%;
             width: 50px;
             height: 50px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -149,7 +152,8 @@
             <i class="fas fa-comments"></i>
         </div>
         <div class="chatbot-container" id="chatbot">
-            <iframe allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/731a3f67-f483-4ddf-85e7-b6fc1229ac39"></iframe>
+            <iframe allow="microphone;"
+                src="https://console.dialogflow.com/api-client/demo/embedded/731a3f67-f483-4ddf-85e7-b6fc1229ac39"></iframe>
         </div> --}}
 
     </div>

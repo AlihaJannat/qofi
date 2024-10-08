@@ -205,6 +205,15 @@ Route::prefix('productorigin')->as('productorigin.')->group(function () {
     Route::delete('/delete', [Admin\ProductoriginController::class, 'delete'])->name('delete');
     Route::get('/status', [Admin\ProductoriginController::class, 'changeStatus'])->name('status');
 });
+
+Route::prefix('productaddon')->as('productaddon.')->group(function () {
+    Route::get('/', [Admin\ProductaddonController::class, 'index'])->name('index');
+    Route::get('yajra', [Admin\YajraController::class, 'productaddonData'])->name('yajra');
+    Route::post('/add', [Admin\ProductaddonController::class, 'add'])->name('add');
+    Route::post('/update', [Admin\ProductaddonController::class, 'update'])->name('update');
+    Route::delete('/delete', [Admin\ProductaddonController::class, 'delete'])->name('delete');
+    Route::get('/status', [Admin\ProductaddonController::class, 'changeStatus'])->name('status');
+});
 Route::prefix('cms')->as('cms.')->group(function () {
     Route::get('{page_name}', [Admin\CmsController::class, 'get'])->name('get');
     Route::post('edit/{page}', [Admin\CmsController::class, 'edit'])->name('edit');
